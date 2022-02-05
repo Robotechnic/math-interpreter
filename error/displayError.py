@@ -5,7 +5,9 @@ class ErrorType(Enum):
 	SyntaxError = auto()
 	ArithmeticExpressionError = auto()
 	ZeroDivisionError = auto()
-
+	MissingParentesisError = auto()
+	UnexpectedCharacterError = auto()
+	UnknownConstError = auto()
 
 def displayError(error : str, error_type : ErrorType, at : int | range, message = "") -> None:
 	"""

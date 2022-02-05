@@ -1,13 +1,17 @@
 from enum import Enum, unique
+import string
 from .tokenErrors import *
 
 @unique
 class TokenType(str, Enum):
 	NUMBER = "0123456789." #last char is decimal separator
+	KEYWORD = string.ascii_lowercase
 	PLUS = "+"
 	MINUS = "-"
 	MUL = "*"
 	DIV = "/"
+	MOD = "%"
+	POW = "^"
 	LPAREN = "("
 	RPAREN = ")"
 

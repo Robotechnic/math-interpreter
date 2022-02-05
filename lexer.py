@@ -1,4 +1,5 @@
-from token import Token, TokenType
+from ast import keyword
+from tokens import Token, TokenType
 from error import displayError, ErrorType
 
 WHITESPACE = " \t\r"
@@ -74,6 +75,26 @@ class Lexer:
 			number.value = int(number.value)
 
 		return number
+
+	def is_keyword(self, char : str) -> bool:
+		"""Check if a given char is a keyword
+
+		Args:
+			char (str): char to check
+
+		Returns:
+			bool: if the char is a keyword
+		"""
+		return char in TokenType.KEYWORD.value
+	
+	def get_keyword(self) -> str:
+		keyword = Token(TokenType.KEYWORD, self.line[self.i], self.i)
+		self.i += 1
+		while self.i < len(self.line) and self.is_keyword(self.line[self.i]):
+			keyword += self.line[self.i]
+			self.i += 1
+		
+		return keyword
 	
 	def get_char_type(self, char : str) -> tuple:
 		"""Check if given char is valid or not
@@ -116,6 +137,8 @@ class Lexer:
 				pass
 			elif self.is_number(c):
 				self.tokens.append(self.get_number())
+			elif self.is_keyword(c):
+				self.tokens.append(self.get_keyword())
 			else:
 				tokenExists, token_type = self.get_char_type(c)
 				
