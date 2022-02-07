@@ -7,7 +7,6 @@ class ErrorType(Enum):
 	ZeroDivisionError = auto()
 	MissingParentesisError = auto()
 	UnexpectedCharacterError = auto()
-	UnknownConstError = auto()
 	FunctionArgumentError = auto()
 
 def displayError(error : str, error_type : ErrorType, at : int | range, message = "") -> None:

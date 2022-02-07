@@ -1,9 +1,7 @@
 from ast import keyword
-from numpy import true_divide
 from nodes import *
 from error import displayError, ErrorType
 from nodes import constantNode
-from nodes import functionNode
 from tokens import Token, TokenType, token
 
 class Parser:
@@ -22,8 +20,8 @@ class Parser:
 			[AddNode,        SubNode]
 		]
 		self.terms = [
-			[TokenType.MUL, TokenType.DIV, TokenType.MOD, TokenType.POW],
-			[MulNode,       DivNode,       ModNode,       PowNode]
+			[TokenType.MUL, TokenType.DIV, TokenType.MOD],
+			[MulNode,       DivNode,       ModNode]
 		]
 	
 	@property
@@ -65,9 +63,9 @@ class Parser:
 	def parse_function_args(self) -> list:
 		args = []
 		while self.check_index() and \
-				self.tokens[self.i].type != TokenType.RPAREN:
+			  self.tokens[self.i].type != TokenType.RPAREN:
 			arg = self.expression()
-			if arg != None:
+			if arg:
 				args.append(arg)
 			else:
 				return None
@@ -83,31 +81,37 @@ class Parser:
 				return None
 			elif self.tokens[self.i].type == TokenType.COMMA:
 				self.i += 1
+
+		return args
 	
-	def check_function_args(self, args : list) -> Node:
-		if FunctionNode.check_args(keyword.value, len(args)):
-			return FunctionNode(keyword.value, args, keyword.start, args[-1].end)
+	def make_function_call(self, functionName : Token, args : list) -> Node:
+		if FunctionNode.check_args(functionName.value, len(args)):
+			return FunctionNode(functionName.value, args, functionName.start, args[-1].end)
 		else:
+			if args:
+				end = args[-1].end
+			else:
+				end = functionName.end + 2
 			displayError(
 				self.line,
 				ErrorType.FunctionArgumentError, 
-				range(keyword.end + 1, args[-1].end),
-				f"Function {keyword.value} takes {FunctionNode.get_args(keyword.value)} arguments but {len(args)} were given"
+				range(functionName.end + 1, end),
+				f"Function {functionName.value} takes {FunctionNode.get_args(functionName.value)} arguments but {len(args)} were given"
 			)
 			self.error = True
 			return None
 
-	def parse_function(self, keyword : Token) -> Node:
+	def parse_function(self, functionName : Token) -> Node:
 		if self.check_index() and self.tokens[self.i].type == TokenType.LPAREN:
 			self.i += 1
 			args = self.parse_function_args()
-			if args:
-				return self.check_function_args(args)
+			if args != None:
+				return self.make_function_call(functionName, args)
 			else:
 				return None
 		else:
 			self.error = True
-			displayError(self.line, ErrorType.MissingParentesisError, keyword.end, "Open parenthesis expected")
+			displayError(self.line, ErrorType.MissingParentesisError, functionName.end, "Open parenthesis expected")
 			return None
 
 
@@ -128,25 +132,51 @@ class Parser:
 			)
 			return None
 
-	def base_token(self) -> Node:
-		token = self.tokens[self.i]
-		if token.type == TokenType.MINUS:
-			self.i += 1
-			return NegNode(self.factor(), token.start, token.end)
-		elif token.type == TokenType.PLUS:
-			self.i += 1
-			return self.factor()
-		elif token.type == TokenType.NUMBER:
-			node = NumberNode(token.value, token.start, token.end)
-			self.i += 1
-			return node
+	def base(self) -> Node:
+		if self.check_index():
+			token = self.tokens[self.i]
+			if self.tokens[self.i].type == TokenType.LPAREN or \
+				self.tokens[self.i].type == TokenType.RPAREN:
+				return self.manage_parenthesis()
+			elif token.type == TokenType.NUMBER:
+				node = NumberNode(token.value, token.start, token.end)
+				self.i += 1
+				return node
+			else:
+				self.error = True
+				displayError(
+					self.line, 
+					ErrorType.UnexpectedCharacterError, 
+					range(token.start, token.end)
+				)
 		else:
 			self.error = True
 			displayError(
-				self.line, 
-				ErrorType.UnexpectedCharacterError, 
-				range(token.start, token.end)
+				self.line,
+				ErrorType.ArithmeticExpressionError,
+				self.tokens[-1].end,
+				"Missing number or expression"
 			)
+	
+	def power(self) -> Node:
+		node = self.base()
+		if node:
+			while self.check_index() and self.tokens[self.i].type == TokenType.POW:
+				self.i += 1
+				base = self.base()
+				if base:
+					node = PowNode(node, base, base.start, base.end)
+				else:
+					self.error = True
+					displayError(
+						self.line,
+						ErrorType.ArithmeticExpressionError,
+						node.end + 1,
+						"Number or expression required"
+					)
+					return None
+		
+		return node
 
 	def factor(self) -> Node:
 		"""
@@ -155,22 +185,30 @@ class Parser:
 		if self.error:
 			return None
 		elif not self.check_index():
-			displayError(
-				self.line,
-				ErrorType.ArithmeticExpressionError,
-				self.tokens[-1].end,
-				"Missing operator"
-			)
+			if len(self.tokens) > 0:
+				displayError(
+					self.line,
+					ErrorType.ArithmeticExpressionError,
+					self.tokens[-1].end,
+					"Missing operator"
+				)
 			self.error = True
 			return None
-		elif self.tokens[self.i].type == TokenType.KEYWORD:
-			return self.detect_keyword()
-		elif self.tokens[self.i].type == TokenType.LPAREN or \
-			 self.tokens[self.i].type == TokenType.RPAREN:
-			return self.manage_parenthesis()
 		else:
-			return self.base_token()
-		
+			token = self.tokens[self.i]
+			if token.type == TokenType.KEYWORD:
+				return self.detect_keyword()
+			else:
+				power = self.power()
+				if not power:
+					return None
+				elif token.type == TokenType.MINUS:
+					self.i += 1
+					return NegNode(power, token.start, token.end)
+				elif token.type == TokenType.PLUS:
+					self.i += 1
+				
+				return power
 
 	def term(self) -> Node:
 		"""
@@ -178,7 +216,7 @@ class Parser:
 		"""
 		node = self.factor()
 
-		while self.i < len(self.tokens) and self.tokens[self.i].type in self.terms[0] and not self.error:
+		while self.check_index() and self.tokens[self.i].type in self.terms[0] and not self.error:
 			term = self.terms[1][
 				self.terms[0].index(self.tokens[self.i].type)
 			]
@@ -194,7 +232,7 @@ class Parser:
 		Parses expressions in token list
 		"""
 		node = self.term()
-		while self.i < len(self.tokens) and self.tokens[self.i].type in self.expressions[0] and not self.error:
+		while self.check_index() and self.tokens[self.i].type in self.expressions[0] and not self.error:
 			expr = self.expressions[1][
 				self.expressions[0].index(self.tokens[self.i].type)
 			]
@@ -260,5 +298,24 @@ if __name__ == "__main__":
 	assert type(result.right) == NumberNode
 	assert result.right.value == 3.5
 
-	
-
+	p = Parser([
+		Token(TokenType.NUMBER, 2, 0),
+		Token(TokenType.POW, "^", 1),
+		Token(TokenType.NUMBER, 2, 2),
+		Token(TokenType.POW, "^", 3),
+		Token(TokenType.NUMBER, 2, 4),
+		Token(TokenType.PLUS, "+", 5),
+		Token(TokenType.NUMBER, 5, 6)
+	], "2^2^2+5")
+	result = p.parse()
+	assert type(result) == AddNode
+	assert type(result.left) == PowNode
+	assert type(result.right) == NumberNode
+	assert result.right.value == 5
+	assert type(result.left.right) == NumberNode
+	assert result.left.right.value == 2
+	assert type(result.left.left) == PowNode
+	assert type(result.left.left.right) == NumberNode
+	assert result.left.left.right.value == 2
+	assert type(result.left.left.left) == NumberNode
+	assert result.left.left.left.value == 2

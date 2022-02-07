@@ -1,5 +1,5 @@
 from .node import Node
-from math import cos, sin, tan, sqrt, pow, acos, asin, atan, atan2
+from math import cos, sin, tan, sqrt, pow, acos, asin, atan, atan2, log
 
 FUNCTION = {
 	"sin": (sin,1),
@@ -10,7 +10,9 @@ FUNCTION = {
 	"acos": (acos,1),
 	"asin": (asin,1),
 	"atan": (atan,1),
-	"atan2": (atan2, 2)
+	"atan2": (atan2, 2),
+	"abs": (abs,1),
+	"log": (log,1)
 }
 
 class FunctionNode(Node):
