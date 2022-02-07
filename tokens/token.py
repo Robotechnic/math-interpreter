@@ -1,17 +1,21 @@
 from enum import Enum, unique
+from lib2to3.pgen2.token import EQUAL
 import string
 from .tokenErrors import *
 
 @unique
 class TokenType(str, Enum):
 	NUMBER = "0123456789." #last char is decimal separator
-	KEYWORD = string.ascii_lowercase
+	KEYWORD = string.ascii_lowercase + NUMBER
 	PLUS = "+"
 	MINUS = "-"
 	MUL = "*"
 	DIV = "/"
 	MOD = "%"
 	POW = "^"
+	COMMA = ","
+	EQUAL = "="
+	FACT = "!"
 	LPAREN = "("
 	RPAREN = ")"
 

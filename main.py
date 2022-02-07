@@ -4,5 +4,8 @@ from parser import Parser
 while True:
 	l = input(">> ")
 	t = Lexer(l)
-	p = Parser(t.tokenize(), l)
-	print(p.parse())
+	tokens = t.tokenize()
+	print(tokens)
+	p = Parser(tokens, l)
+	tree = p.parse()
+	print(tree)

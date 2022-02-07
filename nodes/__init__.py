@@ -8,3 +8,4 @@ from .modNode import ModNode
 from .negNode import NegNode
 from .numberNode import NumberNode
 from .constantNode import ConstantNode
+from .functionNode import FunctionNode

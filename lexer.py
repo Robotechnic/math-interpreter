@@ -94,6 +94,8 @@ class Lexer:
 			keyword += self.line[self.i]
 			self.i += 1
 		
+		self.i -= 1
+		
 		return keyword
 	
 	def get_char_type(self, char : str) -> tuple:

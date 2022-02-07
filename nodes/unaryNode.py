@@ -1,7 +1,8 @@
 from .node import Node
 
 class UnaryNode(Node):
-	def __init__(self, value : Node, prefix = "") -> None:
+	def __init__(self, value : Node, start : int, end : int, prefix = "") -> None:
+		super().__init__(start, end)
 		self._value = None
 		self.value = value
 		self.__prefix = prefix

@@ -1,7 +1,8 @@
 from .node import Node
 
 class BinaryNode(Node):
-	def __init__(self, left : Node, right : Node, separator : str = ",") -> None:
+	def __init__(self, left : Node, right : Node, start: int, end : int, separator : str = ",") -> None:
+		super().__init__(start, end)
 		self._right = None
 		self.right = right
 		self._left = None
