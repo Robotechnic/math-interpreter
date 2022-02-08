@@ -1,11 +1,13 @@
+from errorTypes import ErrorType
+from nodes.nodeResult import NodeResult
 from .node import Node
 from math import cos, sin, tan, sqrt, pow, acos, asin, atan, atan2, log
 
-FUNCTION = {
+FUNCTIONS = {
 	"sin": (sin,1),
 	"cos": (cos,1),
 	"tan": (tan,1),
-	"sqr": (sqrt,1),
+	"sqrt": (sqrt,1),
 	"pow": (pow,2),
 	"acos": (acos,1),
 	"asin": (asin,1),
@@ -35,23 +37,29 @@ class FunctionNode(Node):
 	def check_existence(self, symbol_table : dict) -> tuple:
 		if self.function in symbol_table:
 			return symbol_table[self.function]
-		elif self.function in FUNCTION:
-			return FUNCTION[self.function]
+		elif self.function in FUNCTIONS:
+			return FUNCTIONS[self.function]
 		return None
 	
-	def execute(self, symbol_table = dict()) -> float:
+	def execute(self, args : list, symbol_table = dict()) -> NodeResult:
 		function = self.check_existence(symbol_table)
 		if not function:
-			return (0, f"Function '{self.function}' not defined")
+			return NodeResult(
+				None, 
+				ErrorType.FunctionNameError,
+				f"Function '{self.function}' not defined",
+				range(self.start, self.end)
+			)
 		
-		if len(self.args) != function[1]:
-			return (0, f"Function '{self.function}' expected {function[1]} arguments, but {len(self.args)} where given")
+		if len(args) != function[1]:
+			return NodeResult(
+				None,
+				ErrorType.FunctionArgumentError,
+				f"Function '{self.function}' expects {function[1]} arguments ({len(self.args)} given)",
+				range(self.start, self.end)
+			)
+		
 
-		args = []
-		for node in self.args:
-			result = node.execute()
-			if result[1]:
-				return (None, result[1])
-			args.append(result[0])
-		
-		return (FUNCTION[self.function](*args), None)
+		return NodeResult(
+			function[0](*args)
+		)

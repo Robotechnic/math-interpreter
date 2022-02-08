@@ -1,4 +1,5 @@
 from .node import Node
+from .nodeResult import NodeResult
 
 class NumberNode(Node):
 	def __init__(self, value : int, start : int, end : int) -> None:
@@ -18,7 +19,7 @@ class NumberNode(Node):
 	
 	
 	def execute(self) -> tuple:
-		return (self.value, None)
+		return NodeResult(self.value)
 	
 	def __str__(self) -> str:
 		return f"{str(self.value)}"

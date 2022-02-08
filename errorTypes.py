@@ -8,3 +8,5 @@ class ErrorType(Enum):
 	MissingParentesisError = auto()
 	UnexpectedTokenError = auto()
 	FunctionArgumentError = auto()
+	VariableNameError = auto()
+	FunctionNameError = auto()

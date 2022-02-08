@@ -1,11 +1,6 @@
-from lexer import Lexer
-from parser import Parser
+from interpreter import Interpreter
 
+i = Interpreter()
 while True:
 	l = input(">> ")
-	t = Lexer(l)
-	tokens = t.tokenize()
-	print(tokens)
-	p = Parser(tokens, l)
-	tree = p.parse()
-	print(tree)
+	print(i.evaluate(l))

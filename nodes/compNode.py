@@ -1,5 +1,8 @@
 import imp
 from lib2to3.pgen2.token import NOTEQUAL
+from errorTypes import ErrorType
+
+from nodes.nodeResult import NodeResult
 from .binaryNode import BinaryNode
 from .node import Node
 from enum import Enum, auto
@@ -33,30 +36,31 @@ class CompNode(BinaryNode):
 			raise ComparisonTypeError(message=f"{comparison_type} is not a valid ComparisionType")
 		self._type = comparison_type
 	
-	def process(self) -> bool:
+	def process(self, left : NodeResult, right : NodeResult) -> NodeResult:
 		"""Compare value of the child nodes based on the comparision type
 
 		Returns:
 			bool: the comparision reslt
 		"""
-		left = self.left.process()
-		right = self.right.process()
-		if left[1]:
-			return (None, left[1])
-		elif right[1]:
-			return (None, right[1])
-		elif self.type == ComparisionType.EQUAL:
-			return (left[0] == right[0], None)
+		if self.type == ComparisionType.EQUAL:
+			return NodeResult(left[0] == right[0], None)
 		elif self.type == ComparisionType.NOTEQUAL:
-			return (left[0] != right[0], None)
+			return NodeResult(left[0] != right[0], None)
 		elif self.type == ComparisionType.LESS:
-			return (left[0] < right[0], None)
+			return NodeResult(left[0] < right[0], None)
 		elif self.type == ComparisionType.GREATER:
-			return (left[0] > right[0], None)
+			return NodeResult(left[0] > right[0], None)
 		elif self.type == ComparisionType.LESSEQUAL:
-			return (left[0] <= right[0], None)
+			return NodeResult(left[0] <= right[0], None)
 		elif self.type == ComparisionType.GREATEREQUAL:
-			return (left[0] >= right[0], None)
+			return NodeResult(left[0] >= right[0], None)
+		else: # in case of new unknown comparision type
+			return NodeResult(
+				None,
+				ErrorType.ComparisionTypeError,
+				f"{self.type} is not a valid comparision type",
+				range(self.start, self.end)
+			)
 	
 	def __str__(self) -> str:
 		return f"{self.left} {self.type.name} {self.right}"

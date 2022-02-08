@@ -1,4 +1,6 @@
 from .node import Node
+from .binaryNode import BinaryNode
+from .unaryNode import UnaryNode
 from .addNode import AddNode
 from .divNode import DivNode
 from .mulNode import MulNode
@@ -10,3 +12,4 @@ from .numberNode import NumberNode
 from .functionNode import FunctionNode
 from .varNode import VarNode
 from .compNode import CompNode, ComparisionType
+from .nodeResult import NodeResult

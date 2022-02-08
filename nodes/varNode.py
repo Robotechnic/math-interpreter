@@ -1,4 +1,6 @@
+from errorTypes import ErrorType
 from .node import Node
+from .nodeResult import NodeResult
 
 class VarNode(Node):
 	def __init__(self, name, start, end) -> None:
@@ -11,8 +13,13 @@ class VarNode(Node):
 	def __repr__(self) -> str:
 		return self.__str__()
 
-	def execute(self, symbol_table = dict()) -> float:
+	def execute(self, symbol_table = dict()) -> NodeResult:
 		if self.name in symbol_table:
-			return (symbol_table[self.name], None)
+			return NodeResult(symbol_table[self.name])
 		else:
-			return (0, "Undefined variable '{}'".format(self.name))
+			return NodeResult(
+				None,
+				ErrorType.VariableNameError,
+				f"Undefined variable '{self.name}'",
+				range(self.start, self.end)
+			)
