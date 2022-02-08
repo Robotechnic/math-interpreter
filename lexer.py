@@ -1,6 +1,6 @@
-from ast import keyword
 from tokens import Token, TokenType
-from error import displayError, ErrorType
+from error import displayError
+from errorTypes import ErrorType
 
 WHITESPACE = " \t\r"
 

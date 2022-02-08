@@ -1,6 +1,6 @@
 from .binaryNode import BinaryNode
 from .node import Node
-# from .. import error
+from errorTypes import ErrorType
 
 class DivNode(BinaryNode):
 	def __init__(self, right : Node, left : Node, start : int, end : int) -> None:
@@ -15,6 +15,6 @@ class DivNode(BinaryNode):
 		elif rightValue[1] != None:
 			return (None, rightValue[1])
 		elif rightValue[0] == 0:
-			return (None, "Division 0 error") # error.ErrorType.ZeroDivisionError)
+			return (None, ErrorType.ZeroDivisionError) # error.ErrorType.ZeroDivisionError)
 		else:
 			return (leftValue[0] / rightValue[0], None)

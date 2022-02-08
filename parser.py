@@ -1,6 +1,7 @@
 from nodes import *
-from error import displayError, ErrorType
+from error import displayError
 from tokens import Token, TokenType
+from errorTypes import ErrorType
 
 class Parser:
 	"""
