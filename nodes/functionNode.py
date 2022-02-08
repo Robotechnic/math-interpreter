@@ -16,37 +16,39 @@ FUNCTION = {
 }
 
 class FunctionNode(Node):
-	def __init__(self, function : str, nodes : list, start : int, end : int) -> None:
+	def __init__(self, function : str, args : list, start : int, end : int) -> None:
 		super().__init__(start, end)
 		self.function = function
-		self.nodes = nodes
-	
-	@staticmethod
-	def is_valid(function : str) -> bool:
-		return function in FUNCTION.keys()
-	
-	@staticmethod
-	def check_args(function : str, args : int) -> bool:
-		return FUNCTION[function][1] == args
-	
-	@staticmethod
-	def get_args(function : str) -> int:
-		return FUNCTION[function][1]
+		self.args = args
 
 	def __repr__(self) -> tuple:
 		args_str = ""
-		for i, node in enumerate(self.nodes):
+		for i, node in enumerate(self.args):
 			args_str += str(node)
-			if i < len(self.nodes) - 1:
+			if i < len(self.args) - 1:
 				args_str += ", "
 		return f"(FUNCTION {self.function}({args_str}))"
 	
 	def __str__(self) -> str:
 		return self.__repr__()
 	
-	def execute(self) -> float:
+	def check_existence(self, symbol_table : dict) -> tuple:
+		if self.function in symbol_table:
+			return symbol_table[self.function]
+		elif self.function in FUNCTION:
+			return FUNCTION[self.function]
+		return None
+	
+	def execute(self, symbol_table = dict()) -> float:
+		function = self.check_existence(symbol_table)
+		if not function:
+			return (0, f"Function '{self.function}' not defined")
+		
+		if len(self.args) != function[1]:
+			return (0, f"Function '{self.function}' expected {function[1]} arguments, but {len(self.args)} where given")
+
 		args = []
-		for node in self.nodes:
+		for node in self.args:
 			result = node.execute()
 			if result[1]:
 				return (None, result[1])

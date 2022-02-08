@@ -1,8 +1,6 @@
-from ast import keyword
 from nodes import *
 from error import displayError, ErrorType
-from nodes import constantNode
-from tokens import Token, TokenType, token
+from tokens import Token, TokenType
 
 class Parser:
 	"""
@@ -15,6 +13,10 @@ class Parser:
 		self.tree = None
 		self.line = line
 		self.error = False
+		self.comparisons = [
+			[TokenType.EQUAL, TokenType.NOTEQUAL, TokenType.GREATER, TokenType.LESS, TokenType.GREATEREQUAL, TokenType.LESSEQUAL],
+			[ComparisionType.EQUAL,  ComparisionType.NOTEQUAL, ComparisionType.GREATER, ComparisionType.LESS, ComparisionType.GREATEREQUAL, ComparisionType.LESSEQUAL]
+		]
 		self.expressions = [
 			[TokenType.PLUS, TokenType.MINUS],
 			[AddNode,        SubNode]
@@ -81,56 +83,27 @@ class Parser:
 				return None
 			elif self.tokens[self.i].type == TokenType.COMMA:
 				self.i += 1
+			elif self.tokens[self.i].type != TokenType.RPAREN:
+				self.error = True
+				displayError(
+					self.line,
+					ErrorType.ArithmeticExpressionError,
+					args[-1].end,
+					"Missing comma"
+				)
+				return None
+				
+		self.i += 1
 
 		return args
 	
-	def make_function_call(self, functionName : Token, args : list) -> Node:
-		if FunctionNode.check_args(functionName.value, len(args)):
-			return FunctionNode(functionName.value, args, functionName.start, args[-1].end)
+	def make_function_call(self, functionName : Node) -> Node:
+		args = self.parse_function_args()
+		if args != 	None:
+			return FunctionNode(functionName.name, args, functionName.start, args[-1].end)
 		else:
-			if args:
-				end = args[-1].end
-			else:
-				end = functionName.end + 2
-			displayError(
-				self.line,
-				ErrorType.FunctionArgumentError, 
-				range(functionName.end + 1, end),
-				f"Function {functionName.value} takes {FunctionNode.get_args(functionName.value)} arguments but {len(args)} were given"
-			)
-			self.error = True
 			return None
 
-	def parse_function(self, functionName : Token) -> Node:
-		if self.check_index() and self.tokens[self.i].type == TokenType.LPAREN:
-			self.i += 1
-			args = self.parse_function_args()
-			if args != None:
-				return self.make_function_call(functionName, args)
-			else:
-				return None
-		else:
-			self.error = True
-			displayError(self.line, ErrorType.MissingParentesisError, functionName.end, "Open parenthesis expected")
-			return None
-
-
-	def detect_keyword(self) -> Node:
-		token = self.tokens[self.i]
-		if ConstantNode.is_valid(token.value):
-			self.i += 1
-			return ConstantNode(token.value, token.start, token.end)
-		elif FunctionNode.is_valid(token.value):
-			self.i += 1
-			return self.parse_function(token)
-		else:
-			self.error = True
-			displayError(
-				self.line,
-				ErrorType.UnexpectedCharacterError, 
-				range(token.start, token.end)	
-			)
-			return None
 
 	def base(self) -> Node:
 		if self.check_index():
@@ -139,16 +112,19 @@ class Parser:
 				self.tokens[self.i].type == TokenType.RPAREN:
 				return self.manage_parenthesis()
 			elif token.type == TokenType.NUMBER:
-				node = NumberNode(token.value, token.start, token.end)
 				self.i += 1
-				return node
+				return NumberNode(token.value, token.start, token.end)
+			elif token.type == TokenType.KEYWORD:
+				self.i += 1
+				return VarNode(token.value, token.start, token.end)
 			else:
 				self.error = True
 				displayError(
 					self.line, 
-					ErrorType.UnexpectedCharacterError, 
+					ErrorType.UnexpectedTokenError, 
 					range(token.start, token.end)
 				)
+				return None
 		else:
 			self.error = True
 			displayError(
@@ -157,15 +133,37 @@ class Parser:
 				self.tokens[-1].end,
 				"Missing number or expression"
 			)
+			return None
+	
+	def call(self) -> Node:
+		node = self.base()
+		if node:
+			if self.check_index() and self.tokens[self.i].type == TokenType.LPAREN:
+				self.i += 1
+				if isinstance(node, VarNode):
+					node = self.make_function_call(node)
+				else:
+					self.error = True
+					displayError(
+						self.line,
+						ErrorType.ArithmeticExpressionError,
+						range(
+							node.start,
+							node.end
+						),
+						f"{node.value} is not callable"
+					)
+					return None
+		return node
 	
 	def power(self) -> Node:
-		node = self.base()
+		node = self.call()
 		if node:
 			while self.check_index() and self.tokens[self.i].type == TokenType.POW:
 				self.i += 1
-				base = self.base()
-				if base:
-					node = PowNode(node, base, base.start, base.end)
+				call = self.call()
+				if call:
+					node = PowNode(node, call, call.start, call.end)
 				else:
 					self.error = True
 					displayError(
@@ -196,19 +194,15 @@ class Parser:
 			return None
 		else:
 			token = self.tokens[self.i]
-			if token.type == TokenType.KEYWORD:
-				return self.detect_keyword()
-			else:
-				power = self.power()
-				if not power:
-					return None
-				elif token.type == TokenType.MINUS:
+			node = self.power()
+			if node:
+				if token.type == TokenType.MINUS:
 					self.i += 1
-					return NegNode(power, token.start, token.end)
+					node =  NegNode(node, token.start, token.end)
 				elif token.type == TokenType.PLUS:
 					self.i += 1
-				
-				return power
+			
+			return node
 
 	def term(self) -> Node:
 		"""
@@ -242,6 +236,29 @@ class Parser:
 				node = expr(node, term, node.start, term.end)
 			
 		return node
+	
+	def comparison(self) -> Node:
+		expr = self.expression()
+		if expr:
+			if self.check_index() and self.tokens[self.i].type in self.comparisons[0] and not self.error:
+				compType = self.comparisons[1][
+					self.comparisons[0].index(self.tokens[self.i].type)
+				]
+				self.i += 1
+				expr2 = self.expression()
+				if expr2:
+					expr = CompNode(expr, expr2, compType, expr.start, expr2.end)
+				elif not self.error:
+					self.error = True
+					displayError(
+						self.line,
+						ErrorType.ArithmeticExpressionError,
+						expr.end + 1,
+						"Missing expression"
+					)
+					expr = None
+		
+		return expr
 
 
 	def parse(self) -> Node:
@@ -251,12 +268,18 @@ class Parser:
 			Node: Top node of the Tree
 		"""
 		self.i = 0
-		self.tree = self.expression()
+		self.tree = self.comparison()
 		
 		if self.error:
 			return None
-		
-		return self.tree
+		elif self.check_index():
+			displayError(
+				self.line,
+				ErrorType.SyntaxError,
+				range(self.tokens[self.i].end - 1, len(self.line))
+			)
+		else:
+			return self.tree
 
 
 if __name__ == "__main__":

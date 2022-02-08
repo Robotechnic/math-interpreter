@@ -11,6 +11,14 @@ class Lexer:
 		self.decimal_count = 0
 		self.tokens = []
 	
+	def index_valid(self) -> bool:
+		"""Check if the current index is valid
+
+		Returns:
+			bool: if the current index is valid
+		"""
+		return self.i < len(self.line)
+
 	def end(self) -> None:
 		"""End the tokenize process"""
 		self.i = len(self.line)
@@ -59,12 +67,11 @@ class Lexer:
 		self.decimal_count = 0
 		numberEnd = False
 		self.i += 1
-		while self.i < len(self.line) and not numberEnd:
+		while self.index_valid() and not numberEnd:
 			if not self.check_decimal():
 				return
 			elif not self.is_number(self.line[self.i]):
 				numberEnd = True
-				self.i -= 1
 			else:
 				number += self.line[self.i]
 				self.i += 1
@@ -88,16 +95,61 @@ class Lexer:
 		return char in TokenType.KEYWORD.value
 	
 	def get_keyword(self) -> str:
+		"""
+			Get a keyword token in the line
+
+			Returns:
+				str: keyword token
+		"""
 		keyword = Token(TokenType.KEYWORD, self.line[self.i], self.i)
 		self.i += 1
-		while self.i < len(self.line) and self.is_keyword(self.line[self.i]):
+		while self.index_valid() and self.is_keyword(self.line[self.i]):
 			keyword += self.line[self.i]
 			self.i += 1
 		
-		self.i -= 1
-		
 		return keyword
 	
+	def is_comparison_operator(self, char : str) -> bool:
+		"""Check if a given char is a comparison operator
+
+		Args:
+			char (str): char to test
+
+		Returns:
+			bool: if the char is a comparison operator
+		"""
+		return char in [
+			TokenType.LESS,
+			TokenType.EQUAL,
+			TokenType.GREATER,
+		]
+	
+	def get_comparison_operator(self) -> Token:
+		if self.line[self.i] == TokenType.LESS.value:
+			self.i += 1
+			if self.index_valid():
+				if self.line[self.i] == TokenType.EQUAL.value:
+					self.i += 1
+					return Token(TokenType.LESSEQUAL, "<=", self.i - 2)
+				elif self.line[self.i] == TokenType.GREATER.value:
+					self.i += 1
+					return Token(TokenType.NOTEQUAL, "<>", self.i - 2)
+				else:
+					return Token(TokenType.LESS, "<", self.i - 1)
+		elif self.line[self.i] == TokenType.GREATER.value:
+			self.i += 1
+			if self.index_valid():
+				if self.line[self.i] == TokenType.EQUAL.value:
+					self.i += 1
+					return Token(TokenType.SUPEQUAL, ">=", self.i - 2)
+				else:
+					return Token(TokenType.SUP, ">", self.i - 1)
+		elif self.line[self.i] == TokenType.EQUAL.value:
+			self.i += 1
+			return Token(TokenType.EQUAL, "=", self.i - 1)
+		
+			
+
 	def get_char_type(self, char : str) -> tuple:
 		"""Check if given char is valid or not
 
@@ -118,7 +170,7 @@ class Lexer:
 	
 	def get_error_range(self) -> range:
 		start = self.i
-		while self.i < len(self.line) and not self.get_char_type(self.line[self.i])[0]:
+		while self.index_valid() and not self.get_char_type(self.line[self.i])[0]:
 			self.i += 1
 		
 		return range(start, self.i)
@@ -132,15 +184,17 @@ class Lexer:
 		"""
 		self.i = 0
 		self.tokens = []
-		while self.i < len(self.line):
+		while self.index_valid():
 			c = self.line[self.i]
 			
 			if c in WHITESPACE:
-				pass
+				self.i += 1
 			elif self.is_number(c):
 				self.tokens.append(self.get_number())
 			elif self.is_keyword(c):
 				self.tokens.append(self.get_keyword())
+			elif self.is_comparison_operator(c):
+				self.tokens.append(self.get_comparison_operator())
 			else:
 				tokenExists, token_type = self.get_char_type(c)
 				
@@ -154,8 +208,7 @@ class Lexer:
 					self.end()
 				else:
 					self.tokens.append(Token(token_type, c, self.i))
-				
-			self.i += 1
+					self.i += 1
 		
 		return self.tokens
 

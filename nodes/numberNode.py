@@ -16,6 +16,7 @@ class NumberNode(Node):
 			raise TypeError("value must be int or float")
 		self._value = value
 	
+	
 	def execute(self) -> tuple:
 		return (self.value, None)
 	

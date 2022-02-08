@@ -5,7 +5,7 @@ from .tokenErrors import *
 
 @unique
 class TokenType(str, Enum):
-	NUMBER = "0123456789." #last char is decimal separator
+	NUMBER  = "0123456789." #last char is decimal separator
 	KEYWORD = string.ascii_lowercase + NUMBER
 	PLUS = "+"
 	MINUS = "-"
@@ -15,7 +15,11 @@ class TokenType(str, Enum):
 	POW = "^"
 	COMMA = ","
 	EQUAL = "="
-	FACT = "!"
+	LESS = "<"
+	GREATER = ">"
+	NOTEQUAL = "<>"
+	LESSEQUAL = "<="
+	GREATEREQUAL = ">="
 	LPAREN = "("
 	RPAREN = ")"
 

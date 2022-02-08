@@ -7,5 +7,6 @@ from .powNode import PowNode
 from .modNode import ModNode
 from .negNode import NegNode
 from .numberNode import NumberNode
-from .constantNode import ConstantNode
 from .functionNode import FunctionNode
+from .varNode import VarNode
+from .compNode import CompNode, ComparisionType
