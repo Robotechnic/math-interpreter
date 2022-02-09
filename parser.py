@@ -195,13 +195,11 @@ class Parser:
 			return None
 		else:
 			token = self.tokens[self.i]
+			if token.type == TokenType.MINUS or token.type == TokenType.PLUS:
+				self.i += 1
 			node = self.power()
-			if node:
-				if token.type == TokenType.MINUS:
-					self.i += 1
-					node =  NegNode(node, token.start, token.end)
-				elif token.type == TokenType.PLUS:
-					self.i += 1
+			if node and token.type == TokenType.MINUS:
+				node =  NegNode(node, token.start, node.end)
 			
 			return node
 

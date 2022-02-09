@@ -10,3 +10,4 @@ class ErrorType(Enum):
 	FunctionArgumentError = auto()
 	VariableNameError = auto()
 	FunctionNameError = auto()
+	DomainError = auto()

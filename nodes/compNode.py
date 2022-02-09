@@ -36,24 +36,24 @@ class CompNode(BinaryNode):
 			raise ComparisonTypeError(message=f"{comparison_type} is not a valid ComparisionType")
 		self._type = comparison_type
 	
-	def process(self, left : NodeResult, right : NodeResult) -> NodeResult:
+	def execute(self, left : NodeResult, right : NodeResult) -> NodeResult:
 		"""Compare value of the child nodes based on the comparision type
 
 		Returns:
 			bool: the comparision reslt
 		"""
 		if self.type == ComparisionType.EQUAL:
-			return NodeResult(left[0] == right[0], None)
+			return NodeResult(left.value == right.value)
 		elif self.type == ComparisionType.NOTEQUAL:
-			return NodeResult(left[0] != right[0], None)
+			return NodeResult(left.value != right.value)
 		elif self.type == ComparisionType.LESS:
-			return NodeResult(left[0] < right[0], None)
+			return NodeResult(left.value < right.value)
 		elif self.type == ComparisionType.GREATER:
-			return NodeResult(left[0] > right[0], None)
+			return NodeResult(left.value > right.value)
 		elif self.type == ComparisionType.LESSEQUAL:
-			return NodeResult(left[0] <= right[0], None)
+			return NodeResult(left.value <= right.value)
 		elif self.type == ComparisionType.GREATEREQUAL:
-			return NodeResult(left[0] >= right[0], None)
+			return NodeResult(left.value >= right.value, None)
 		else: # in case of new unknown comparision type
 			return NodeResult(
 				None,
