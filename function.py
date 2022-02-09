@@ -120,3 +120,9 @@ class Function:
 		else:
 			args_value = list(map(lambda x: x.value, args))
 			return FunctionResult(self.body(*args_value))
+	
+	def __str__(self) -> str:
+		return f"{self.name}({', '.join(map(lambda x: x.name, self.args))}) = {self.body}"
+	
+	def __repr__(self) -> str:
+		return self.__str__()

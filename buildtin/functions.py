@@ -40,8 +40,8 @@ functions = {
 	"atan2": Function(
 		"atan2",
 		[
-			FunctionArg("y", "notnul"),
-			FunctionArg("x", "notnul")
+			FunctionArg("x", "notnul"),
+			FunctionArg("y", "notnul")
 		],
 		atan2
 	),

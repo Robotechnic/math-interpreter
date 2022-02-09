@@ -12,7 +12,7 @@ class Interpreter:
 			self.symbol_table = buildtin_symbol_table
 		else:
 			self.symbol_table = symbol_table
-		
+
 		self.init_parse()
 	
 	def init_parse(self) -> None:
@@ -24,13 +24,17 @@ class Interpreter:
 		self.tree = None
 		self.finished = False
 
-	def convert_into_tokens(self) -> list:
+	def convert_into_tokens(self) -> None:
+		"""
+		Convert current line into tokens
+		"""
 		self.tokens = Lexer(self.line).tokenize()
 		if not self.tokens:
 			self.finished = True
 	
 	def parse_tokens(self) -> None:
-		"""Convert token list into a executable tree
+		"""
+		Convert token list into a executable tree
 		"""
 		p = Parser(self.tokens, self.line)
 		self.tree = p.parse()
@@ -38,6 +42,15 @@ class Interpreter:
 			self.finished = True
 	
 	def visit_binary_node(self, node : BinaryNode) -> NodeResult:
+		"""
+		Take a binary node and process it
+
+		Args:
+			node (BinaryNode): node to process
+
+		Returns:
+			NodeResult: result of the process
+		"""
 		left = self.visit_node(node.left)
 		if left.error:
 			self.finished = True
@@ -51,6 +64,15 @@ class Interpreter:
 		return node.execute(left, right)
 	
 	def visit_unary_node(self, node : UnaryNode) -> NodeResult:
+		"""
+		Take a unary node and process it
+
+		Args:
+			node (UnaryNode): node to process
+
+		Returns:
+			NodeResult: result of the process
+		"""
 		value = self.visit_node(node.value)
 		if value.error:
 			self.finished = True
@@ -59,6 +81,15 @@ class Interpreter:
 		return node.execute(value)
 
 	def visit_function_node(self, node : FunctionNode) -> NodeResult:
+		"""
+		Take a function node, process arguments and process function
+
+		Args:
+			node (FunctionNode): node to process
+
+		Returns:
+			NodeResult: result of the process
+		"""
 		args = []
 		for arg in node.args:
 			arg_result = self.visit_node(arg)
@@ -72,7 +103,7 @@ class Interpreter:
 
 	def visit_node(self, node : Node) -> NodeResult:
 		"""
-		Visit a node and return the result
+		Visit a node process it and return the result
 
 		Args:
 			node (Node): node to visit
