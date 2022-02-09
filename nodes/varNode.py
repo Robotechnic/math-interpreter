@@ -15,11 +15,11 @@ class VarNode(Node):
 
 	def execute(self, symbol_table = dict()) -> NodeResult:
 		if self.name in symbol_table:
-			return NodeResult(symbol_table[self.name])
+			return NodeResult(symbol_table[self.name], range(self.start, self.end))
 		else:
 			return NodeResult(
 				None,
+				range(self.start, self.end),
 				ErrorType.VariableNameError,
-				f"Undefined variable '{self.name}'",
-				range(self.start, self.end)
+				f"Undefined variable '{self.name}'"
 			)

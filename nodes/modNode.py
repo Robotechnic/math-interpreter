@@ -11,10 +11,10 @@ class ModNode(BinaryNode):
 		if right.value == 0:
 			return NodeResult(
 				None,
+				range(self.left.start, self.right.end),
 				ErrorType.ZeroDivisionError,
-				"",
-				range(self.left.start, self.left.end)
+				""
 			)
-		return NodeResult(left.value % right.value)
+		return NodeResult(left.value % right.value, range(self.left.start, self.right.end))
 	
 	

@@ -120,11 +120,12 @@ class Lexer:
 		"""
 		return char in [
 			TokenType.LESS,
-			TokenType.EQUAL,
+			TokenType.AFFECT,
 			TokenType.GREATER,
 		]
 	
 	def get_comparison_operator(self) -> Token:
+		print("COmparison")
 		if self.line[self.i] == TokenType.LESS.value:
 			self.i += 1
 			if self.index_valid():
@@ -144,9 +145,13 @@ class Lexer:
 					return Token(TokenType.SUPEQUAL, ">=", self.i - 2)
 				else:
 					return Token(TokenType.SUP, ">", self.i - 1)
-		elif self.line[self.i] == TokenType.EQUAL.value:
+		elif self.line[self.i] == TokenType.AFFECT.value:
 			self.i += 1
-			return Token(TokenType.EQUAL, "=", self.i - 1)
+			if self.line[self.i] == TokenType.AFFECT.value:
+				self.i += 1
+				return Token(TokenType.EQUAL, "==", self.i - 1)
+			else:
+				return Token(TokenType.AFFECT, "=", self.i - 1)
 		
 			
 

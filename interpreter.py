@@ -1,11 +1,18 @@
+from errorTypes import ErrorType
+from function import Function, FunctionArg
 from nodes import Node, BinaryNode, UnaryNode, NumberNode, VarNode, FunctionNode, NodeResult
 from lexer import Lexer
 from parser import Parser
 from error import displayError
+from buildtin import buildtin_symbol_table
 
 class Interpreter:
-	def __init__(self) -> None:
-		self.symbolTable = {}
+	def __init__(self, symbol_table = dict()) -> None:
+		if not symbol_table:
+			self.symbol_table = buildtin_symbol_table
+		else:
+			self.symbol_table = symbol_table
+		
 		self.init_parse()
 	
 	def init_parse(self) -> None:
@@ -59,9 +66,9 @@ class Interpreter:
 				self.finished = True
 				return arg_result
 			
-			args.append(arg_result.value)
+			args.append(arg_result)
 		
-		return node.execute(args, self.symbolTable)
+		return node.execute(args, self.symbol_table)
 
 	def visit_node(self, node : Node) -> NodeResult:
 		"""
@@ -74,6 +81,7 @@ class Interpreter:
 			
 		"""
 		node_type = type(node)
+
 		if issubclass(node_type, BinaryNode):
 			return self.visit_binary_node(node)
 		elif issubclass(node_type, UnaryNode):
@@ -81,11 +89,16 @@ class Interpreter:
 		elif issubclass(node_type, NumberNode):
 			return node.execute()
 		elif issubclass(node_type, VarNode):
-			return node.execute(self.symbolTable)
+			return node.execute(self.symbol_table)
 		elif issubclass(node_type, FunctionNode):
 			return self.visit_function_node(node)
 			
-		return 0
+		return NodeResult(
+			None,
+			range(node.start, node.end),
+			ErrorType.UnsupportedNode,
+			"Unknown node type",
+		)
 
 	def evaluate(self, line : str) -> None:
 		"""Convert line into tree and evaluate it

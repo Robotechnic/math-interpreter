@@ -11,8 +11,8 @@ class DivNode(BinaryNode):
 		if right.value == 0:
 			return NodeResult(
 				None,
+				range(self.right.start, self.right.end),
 				ErrorType.ZeroDivisionError,
-				"",
-				range(self.right.start, self.right.end)
+				""
 			)
-		return NodeResult(left.value / right.value)
+		return NodeResult(left.value / right.value, range(self.left.start, self.right.end))

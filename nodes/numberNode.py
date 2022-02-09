@@ -19,7 +19,7 @@ class NumberNode(Node):
 	
 	
 	def execute(self) -> tuple:
-		return NodeResult(self.value)
+		return NodeResult(self.value, range(self.start, self.end))
 	
 	def __str__(self) -> str:
 		return f"{str(self.value)}"

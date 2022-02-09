@@ -2,5 +2,5 @@ from interpreter import Interpreter
 
 i = Interpreter()
 while True:
-	l = input(">> ")
+	l = input(">>> ")
 	print(i.evaluate(l))

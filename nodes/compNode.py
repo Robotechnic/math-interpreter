@@ -43,23 +43,23 @@ class CompNode(BinaryNode):
 			bool: the comparision reslt
 		"""
 		if self.type == ComparisionType.EQUAL:
-			return NodeResult(left.value == right.value)
+			return NodeResult(left.value == right.value, range(self.left.start, self.right.end))
 		elif self.type == ComparisionType.NOTEQUAL:
-			return NodeResult(left.value != right.value)
+			return NodeResult(left.value != right.value, range(self.left.start, self.right.end))
 		elif self.type == ComparisionType.LESS:
-			return NodeResult(left.value < right.value)
+			return NodeResult(left.value < right.value, range(self.left.start, self.right.end))
 		elif self.type == ComparisionType.GREATER:
-			return NodeResult(left.value > right.value)
+			return NodeResult(left.value > right.value, range(self.left.start, self.right.end))
 		elif self.type == ComparisionType.LESSEQUAL:
-			return NodeResult(left.value <= right.value)
+			return NodeResult(left.value <= right.value, range(self.left.start, self.right.end))
 		elif self.type == ComparisionType.GREATEREQUAL:
-			return NodeResult(left.value >= right.value, None)
+			return NodeResult(left.value >= right.value, range(self.left.start, self.right.end))
 		else: # in case of new unknown comparision type
 			return NodeResult(
 				None,
+				range(self.left.start, self.right.end),
 				ErrorType.ComparisionTypeError,
-				f"{self.type} is not a valid comparision type",
-				range(self.start, self.end)
+				f"{self.type} is not a valid comparision type"
 			)
 	
 	def __str__(self) -> str:

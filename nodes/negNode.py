@@ -8,4 +8,4 @@ class NegNode(UnaryNode):
 		super().__init__(value, start, end, "-")
 	
 	def execute(self, value : NodeResult) -> tuple:
-		return NodeResult(-value.value)
+		return NodeResult(-value.value, range(self.start, self.value.end))

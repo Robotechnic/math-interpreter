@@ -1,21 +1,6 @@
 from errorTypes import ErrorType
 from nodes.nodeResult import NodeResult
 from .node import Node
-from math import cos, sin, tan, sqrt, pow, acos, asin, atan, atan2, log
-
-FUNCTIONS = {
-	"sin": (sin,1),
-	"cos": (cos,1),
-	"tan": (tan,1),
-	"sqrt": (sqrt,1),
-	"pow": (pow,2),
-	"acos": (acos,1),
-	"asin": (asin,1),
-	"atan": (atan,1),
-	"atan2": (atan2, 2),
-	"abs": (abs,1),
-	"log": (log,1)
-}
 
 class FunctionNode(Node):
 	def __init__(self, function : str, args : list, start : int, end : int) -> None:
@@ -34,32 +19,52 @@ class FunctionNode(Node):
 	def __str__(self) -> str:
 		return self.__repr__()
 	
-	def check_existence(self, symbol_table : dict) -> tuple:
+	def check_existence(self, symbol_table : dict) -> "Function":
+		"""
+		Check if function exists in symbol table
+
+		Args:
+			symbol_table (dict): symbol table to use
+
+		Returns:
+			Function: function if exists else None
+		"""
 		if self.function in symbol_table:
 			return symbol_table[self.function]
-		elif self.function in FUNCTIONS:
-			return FUNCTIONS[self.function]
+
 		return None
 	
 	def execute(self, args : list, symbol_table = dict()) -> NodeResult:
+		"""
+		Run function call
+
+		Args:
+			args (list): list of arguments
+			symbol_table (dict, optional): symbol table to use
+
+		Returns:
+			NodeResult: result of the function call
+		"""
 		function = self.check_existence(symbol_table)
 		if not function:
 			return NodeResult(
-				None, 
+				None,
+				range(self.start, self.end),
 				ErrorType.FunctionNameError,
-				f"Function '{self.function}' not defined",
-				range(self.start, self.end)
+				f"Function '{self.function}' not defined"
 			)
 		
-		if len(args) != function[1]:
+		if not function.check_args(args):
 			return NodeResult(
 				None,
+				range(self.start, self.end),
 				ErrorType.FunctionArgumentError,
-				f"Function '{self.function}' expects {function[1]} arguments ({len(self.args)} given)",
-				range(self.start, self.end)
+				f"Function '{self.function}' expects {len(function.args)} arguments ({len(self.args)} given)"
 			)
 		
 
-		return NodeResult(
-			function[0](*args)
-		)
+		result = function(symbol_table, args)
+		if result.error:
+			return NodeResult(None, range(self.start, self.end), ErrorType.FunctionError)
+		else:
+			return NodeResult(result.value, range(self.start, self.end))
