@@ -128,27 +128,28 @@ class Lexer:
 		if self.line[self.i] == TokenType.LESS.value:
 			self.i += 1
 			if self.index_valid():
-				if self.line[self.i] == TokenType.EQUAL.value:
+				if self.line[self.i] == TokenType.AFFECT.value:
 					self.i += 1
 					return Token(TokenType.LESSEQUAL, "<=", self.i - 2)
 				elif self.line[self.i] == TokenType.GREATER.value:
 					self.i += 1
 					return Token(TokenType.NOTEQUAL, "<>", self.i - 2)
-				else:
-					return Token(TokenType.LESS, "<", self.i - 1)
+			else:
+				return Token(TokenType.LESS, "<", self.i - 1)
+			
 		elif self.line[self.i] == TokenType.GREATER.value:
 			self.i += 1
-			if self.index_valid():
-				if self.line[self.i] == TokenType.EQUAL.value:
-					self.i += 1
-					return Token(TokenType.GREATEREQUAL, ">=", self.i - 2)
-				else:
-					return Token(TokenType.GREATER, ">", self.i - 1)
+			if self.index_valid() and self.line[self.i] == TokenType.AFFECT.value:
+				self.i += 1
+				return Token(TokenType.GREATEREQUAL, ">=", self.i - 2)
+			else:
+				return Token(TokenType.GREATER, ">", self.i - 1)
+
 		elif self.line[self.i] == TokenType.AFFECT.value:
 			self.i += 1
-			if self.line[self.i] == TokenType.AFFECT.value:
+			if self.index_valid() and self.line[self.i] == TokenType.AFFECT.value:
 				self.i += 1
-				return Token(TokenType.EQUAL, "==", self.i - 1)
+				return Token(TokenType.EQUAL, "==", self.i - 2)
 			else:
 				return Token(TokenType.AFFECT, "=", self.i - 1)
 		
@@ -227,6 +228,42 @@ if __name__ == "__main__":
 		Token(TokenType.MUL, "*", 8),
 		Token(TokenType.NUMBER, 3.5, 9),
 		Token(TokenType.RPAREN, ")", 12)
+	]
+
+	l = Lexer("==")
+	print(l.tokenize())
+	assert l.tokenize() == [
+		Token(TokenType.EQUAL, "==", 0),
+	]
+
+	l = Lexer("<>")
+	print(l.tokenize())
+	assert l.tokenize() == [
+		Token(TokenType.NOTEQUAL, "<>", 0),
+	]
+
+	l = Lexer("<=")
+	print(l.tokenize())
+	assert l.tokenize() == [
+		Token(TokenType.LESSEQUAL, "<=", 0),
+	]
+
+	l = Lexer(">=")
+	print(l.tokenize())
+	assert l.tokenize() == [
+		Token(TokenType.GREATEREQUAL, ">=", 0),
+	]
+
+	l = Lexer("<")
+	print(l.tokenize())
+	assert l.tokenize() == [
+		Token(TokenType.LESS, "<", 0),
+	]
+
+	l = Lexer(">")
+	print(l.tokenize())
+	assert l.tokenize() == [
+		Token(TokenType.GREATER, ">", 0),
 	]
 
 	l = Lexer("")

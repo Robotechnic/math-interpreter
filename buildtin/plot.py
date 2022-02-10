@@ -1,4 +1,4 @@
-from tokenize import Number
+from _tkinter import TclError
 from matplotlib import pyplot as plt
 from errorTypes import ErrorType
 from function import Function
@@ -24,6 +24,10 @@ def plot(function : Function, min : int, max : int, step : int, symbol_table : d
 			y_values.append(float("nan"))
 	
 	plt.plot(x_values, y_values)
-	plt.show()
+	
+	try:
+		plt.show()
+	except TclError:
+		pass
 
 	return FunctionResult(None)
