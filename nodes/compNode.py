@@ -14,6 +14,7 @@ class ComparisionType(Enum):
 	GREATER = auto()
 	LESSEQUAL = auto()
 	GREATEREQUAL = auto()
+	DIVIDE = auto()
 
 class ComparisonTypeError(Exception):
 	pass
@@ -54,6 +55,14 @@ class CompNode(BinaryNode):
 			return NodeResult(left.value <= right.value, range(self.left.start, self.right.end))
 		elif self.type == ComparisionType.GREATEREQUAL:
 			return NodeResult(left.value >= right.value, range(self.left.start, self.right.end))
+		elif self.type == ComparisionType.DIVIDE:
+			if left.value == 0 or right.value == 0:
+				return NodeResult(
+					False, 
+					range(self.right.start, self.right.end),
+					ErrorType.ZeroDivisionError
+				)
+			return NodeResult(right.value % left.value == 0, range(self.left.start, self.right.end))
 		else: # in case of new unknown comparision type
 			return NodeResult(
 				None,

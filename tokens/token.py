@@ -26,6 +26,7 @@ class TokenType(str, Enum):
 	LBRACKET = "["
 	RBRACKET = "]"
 	SEMICOLON = ";"
+	DIVIDE = "|"
 
 
 class Token:

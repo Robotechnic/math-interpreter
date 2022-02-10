@@ -19,8 +19,8 @@ class Parser:
 		self._token = None
 
 		self.comparisons = [
-			[TokenType.EQUAL, TokenType.NOTEQUAL, TokenType.GREATER, TokenType.LESS, TokenType.GREATEREQUAL, TokenType.LESSEQUAL],
-			[ComparisionType.EQUAL,  ComparisionType.NOTEQUAL, ComparisionType.GREATER, ComparisionType.LESS, ComparisionType.GREATEREQUAL, ComparisionType.LESSEQUAL]
+			[TokenType.EQUAL, TokenType.NOTEQUAL, TokenType.GREATER, TokenType.LESS, TokenType.GREATEREQUAL, TokenType.LESSEQUAL, TokenType.DIVIDE],
+			[ComparisionType.EQUAL,  ComparisionType.NOTEQUAL, ComparisionType.GREATER, ComparisionType.LESS, ComparisionType.GREATEREQUAL, ComparisionType.LESSEQUAL, ComparisionType.DIVIDE]
 		]
 		self.expressions = [
 			[TokenType.PLUS, TokenType.MINUS],
