@@ -65,6 +65,9 @@ class FunctionNode(Node):
 
 		result = function(symbol_table, args)
 		if result.error:
-			return NodeResult(None, range(self.start, self.end), ErrorType.FunctionError)
+			if result.error == ErrorType.DomainError:
+				return result
+			else:
+				return NodeResult(None, range(self.start, self.end), ErrorType.FunctionError)
 		else:
 			return NodeResult(result.value, range(self.start, self.end))

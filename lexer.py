@@ -125,7 +125,6 @@ class Lexer:
 		]
 	
 	def get_comparison_operator(self) -> Token:
-		print("COmparison")
 		if self.line[self.i] == TokenType.LESS.value:
 			self.i += 1
 			if self.index_valid():

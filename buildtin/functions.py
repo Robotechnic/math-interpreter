@@ -1,4 +1,5 @@
-from function import Function, FunctionArg
+from functionProps import FunctionArg, ArgRange
+from function import Function
 from math import sin, cos, tan, sqrt, tan, atan, atan2, acos, asin, radians, degrees
 
 functions = {
@@ -26,36 +27,36 @@ functions = {
 	"sqrt": Function(
 		"sqrt",
 		[
-			FunctionArg("x", "pos")
+			FunctionArg("x", ArgRange("pos"))
 		],
 		sqrt
 	),
 	"atan": Function(	
 		"atan",
 		[
-			FunctionArg("x", range(-1, 1))
+			FunctionArg("x", ArgRange(min_bound=-1, max_bound=1))
 		],
 		atan
 	),
 	"atan2": Function(
 		"atan2",
 		[
-			FunctionArg("x", "notnul"),
-			FunctionArg("y", "notnul")
+			FunctionArg("x", ArgRange("notnul")),
+			FunctionArg("y", ArgRange("notnul"))
 		],
 		atan2
 	),
 	"acos": Function(
 		"acos",
 		[
-			FunctionArg("x", range(-1, 1))
+			FunctionArg("x", ArgRange(min_bound=-1, max_bound=1))
 		],
 		acos
 	),
 	"asin": Function(
 		"asin",
 		[
-			FunctionArg("x", range(-1, 1))
+			FunctionArg("x", ArgRange(min_bound=-1, max_bound=1))
 		],
 		asin
 	),
@@ -72,5 +73,12 @@ functions = {
 			FunctionArg("x")
 		],
 		degrees
+	),
+	"abs": Function(
+		"abs",
+		[
+			FunctionArg("x")
+		],
+		abs
 	)
 }

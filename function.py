@@ -1,19 +1,9 @@
-from dataclasses import dataclass
+import types
 from error.displayError import displayError
 from nodes import Node, NodeResult
-import types
 from errorTypes import ErrorType
+from functionProps import FunctionResult, ArgRange
 import interpreter as inter
-
-@dataclass
-class FunctionArg:
-	name : str
-	range : range = None
-
-@dataclass
-class FunctionResult:
-	value : int | float | bool
-	error : ErrorType = None
 
 class Function:
 	def __init__(self, name : str, args : list, body : Node | types.FunctionType | types.BuiltinFunctionType, expression = "") -> None:
@@ -42,18 +32,6 @@ class Function:
 			bool: True if the arguments are valid, False otherwise
 		"""
 		return len(args) == len(self.args)
-
-	def check_specials_ranges(slef, value : int | float, range : str) -> bool:
-		if range == "pos":
-			return value >= 0
-		elif range == "neg":
-			return value <= 0
-		elif range == "pos*":
-			return value > 0
-		elif range == "neg*":
-			return value < 0
-		elif range == "notnul":
-			return value != 0
 	
 	def check_args_range(self, args : list) -> tuple:
 		"""
@@ -68,29 +46,25 @@ class Function:
 		
 		for i in range(len(args)):
 			arg = args[i]
-			if self.args[i].range:
-				in_range = True
-				if type(self.args[i].range) == range:
-					in_range = arg.value in self.args[i].range
-				else:
-					in_range = self.check_specials_ranges(arg.value, self.args[i].range)
+			if self.args[i].arg_range:
+				in_range = self.args[i].arg_range.check_value(arg.value)
 
 				if not in_range:
 					return False, NodeResult(
 						None,
 						arg.pos,
 						ErrorType.DomainError,
-						f"Argument {i} of function {self.name} with value {arg.value} is out of {self.args[i].range}"
+						f"Argument {i} of function {self.name} with value {arg.value} is out of {self.args[i].arg_range}"
 					)
 		
 		return True, None
 
-	def __call__(self, symbolTable : dict, args : list) -> NodeResult:
+	def __call__(self, symbol_table : dict, args : list) -> NodeResult:
 		"""
 			Run the function with given arguments or interpret the function body
 
 			Args:
-				symbolTable (dict): parent symbol table
+				symbol_table (dict): parent symbol table
 				args (list<NodeResult>): arguments to pass to the function
 			
 			Returns:
@@ -102,10 +76,11 @@ class Function:
 			return check[1]
 
 		if issubclass(type(self.body), Node):
+			symbol_table = symbol_table.copy()
 			for i in range(len(self.args)):
-				symbolTable[self.args[i].name] = args[i].value
+				symbol_table[self.args[i].name] = args[i].value
 
-			i = inter.Interpreter(symbolTable)
+			i = inter.Interpreter(symbol_table)
 			result = i.visit_node(self.body)
 			if result.error:
 				displayError(

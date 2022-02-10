@@ -10,6 +10,7 @@ from .modNode import ModNode
 from .negNode import NegNode
 from .numberNode import NumberNode
 from .functionNode import FunctionNode
+from .functionDeclarationNode import FunctionDeclarationNode
 from .varNode import VarNode
 from .compNode import CompNode, ComparisionType
 from .nodeResult import NodeResult

@@ -23,6 +23,9 @@ class TokenType(str, Enum):
 	GREATEREQUAL = ">="
 	LPAREN = "("
 	RPAREN = ")"
+	LBRACKET = "["
+	RBRACKET = "]"
+	SEMICOLON = ";"
 
 
 class Token:
@@ -143,16 +146,19 @@ class Token:
 
 		return self
 	
-	def __eq__(self, other : "Token") -> bool:
+	def __eq__(self, other : "Token" ) -> bool:
 		"""Check if two tokens are equal
 
 		Args:
-			other (Token): token to compare to this token
+			other (Token | TokenType): token to compare to this token
 
 		Returns:
 			bool: True if the tokens are equal, False otherwise
 		"""
-		return self.type == other.type and self.value == other.value and self.start == other.start
+		if type(other) == Token:
+			return self.type == other.type and self.value == other.value and self.start == other.start
+		else:
+			return self.type == other
 
 	def __str__(self):
 		return f"({self.type.name}, {self.value}, {self.start})"

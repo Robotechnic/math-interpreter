@@ -1,6 +1,7 @@
 from errorTypes import ErrorType
-from function import Function, FunctionArg
-from nodes import Node, BinaryNode, UnaryNode, NumberNode, VarNode, FunctionNode, NodeResult
+from functionProps import FunctionArg
+from function import Function
+from nodes import Node, BinaryNode, UnaryNode, NumberNode, VarNode, FunctionNode, NodeResult, FunctionDeclarationNode
 from lexer import Lexer
 from parser import Parser
 from error import displayError
@@ -100,6 +101,27 @@ class Interpreter:
 			args.append(arg_result)
 		
 		return node.execute(args, self.symbol_table)
+	
+	def visit_function_declaration_node(self, node : FunctionDeclarationNode) -> NodeResult:
+		"""
+		Add function to symbol table
+
+		Args:
+			node (FunctionDeclarationNode): function to process
+		
+		Returns:
+			NodeResult: nothing if everything is ok else, error
+		
+		"""
+		
+		self.symbol_table[node.name] = Function(
+			node.name,
+			node.args,
+			node.body,
+			node.expression
+		)
+
+		return NodeResult(None, range(node.start, node.end))
 
 	def visit_node(self, node : Node) -> NodeResult:
 		"""
@@ -119,10 +141,12 @@ class Interpreter:
 			return self.visit_unary_node(node)
 		elif issubclass(node_type, NumberNode):
 			return node.execute()
-		elif issubclass(node_type, VarNode):
+		elif isinstance(node, VarNode):
 			return node.execute(self.symbol_table)
-		elif issubclass(node_type, FunctionNode):
+		elif isinstance(node, FunctionNode):
 			return self.visit_function_node(node)
+		elif isinstance(node, FunctionDeclarationNode):
+			return self.visit_function_declaration_node(node)
 			
 		return NodeResult(
 			None,

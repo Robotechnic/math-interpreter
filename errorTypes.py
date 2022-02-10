@@ -10,6 +10,7 @@ class ErrorType(Enum):
 	ZeroDivisionError = auto()
 	DomainError = auto()
 
+	FunctionDeclarationError = auto()
 	FunctionArgumentError = auto()
 	FunctionNameError = auto()
 	FunctionError = auto()
