@@ -1,7 +1,7 @@
 from .argRanges import ArgRange
 
 class FunctionArg:
-	def __init__(self, name : str, start : int, end : int, arg_range : range | ArgRange = None) -> None:
+	def __init__(self, name : str, start : int = 0, end : int = 0, arg_range : range | ArgRange = None) -> None:
 		self.name = name
 		self._range = None
 		self.arg_range = arg_range
