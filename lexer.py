@@ -141,9 +141,9 @@ class Lexer:
 			if self.index_valid():
 				if self.line[self.i] == TokenType.EQUAL.value:
 					self.i += 1
-					return Token(TokenType.SUPEQUAL, ">=", self.i - 2)
+					return Token(TokenType.GREATEREQUAL, ">=", self.i - 2)
 				else:
-					return Token(TokenType.SUP, ">", self.i - 1)
+					return Token(TokenType.GREATER, ">", self.i - 1)
 		elif self.line[self.i] == TokenType.AFFECT.value:
 			self.i += 1
 			if self.line[self.i] == TokenType.AFFECT.value:

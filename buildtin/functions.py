@@ -2,6 +2,7 @@ from functionProps import FunctionArg, ArgRange
 from function import Function
 from math import sin, cos, tan, sqrt, tan, atan, atan2, acos, asin, radians, degrees
 from .plot import plot
+from .plot2d import plot2d
 
 functions = {
 	"sin": Function(
@@ -91,5 +92,18 @@ functions = {
 			FunctionArg("step")
 		],
 		plot
+	),
+	"plot2d": Function(
+		"plot2d",
+		[
+			FunctionArg("function"),
+			FunctionArg("x_min"),
+			FunctionArg("y_min"),
+			FunctionArg("x_max"),
+			FunctionArg("y_max"),
+			FunctionArg("step_x"),
+			FunctionArg("step_y"),
+		],
+		plot2d
 	)
 }
