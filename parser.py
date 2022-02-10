@@ -143,8 +143,6 @@ class Parser:
 		if self.error:
 			return None
 		
-		self.i += 1
-		
 		return max_bound
 	
 	def parse_args_range_bounds(self) -> ArgRange:
@@ -163,7 +161,7 @@ class Parser:
 				bounds = self.parse_keyword_range()
 			else:
 				bounds =  self.parse_args_range_bounds()
-			
+
 			if self.check_index() and self.token != TokenType.RBRACKET:
 				self.error = True
 				displayError(
@@ -209,7 +207,7 @@ class Parser:
 			else:
 				arg_range = self.parse_arg_range()
 				if not self.error:
-					return FunctionArg(arg.name, arg.start, arg.end, arg_range)
+					return FunctionArg(arg.name, arg_range, arg.start, arg.end)
 
 		return None
 

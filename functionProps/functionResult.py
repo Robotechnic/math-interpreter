@@ -5,3 +5,4 @@ from errorTypes import ErrorType
 class FunctionResult:
 	value : int | float | bool
 	error : ErrorType = None
+	message : str = ""

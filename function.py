@@ -58,6 +58,12 @@ class Function:
 					)
 		
 		return True, None
+	
+	def check_arg_range(self, arg_index : int, arg_value : int | float | bool) -> bool:
+		if self.args[arg_index].arg_range:
+			return self.args[arg_index].arg_range.check_value(arg_value)
+		else:
+			return True
 
 	def __call__(self, symbol_table : dict, args : list) -> NodeResult:
 		"""
@@ -70,7 +76,6 @@ class Function:
 			Returns:
 				NodeResult: result or error of the function
 		"""
-		
 		check = self.check_args_range(args)
 		if not check[0]:
 			return check[1]
@@ -94,10 +99,13 @@ class Function:
 				return FunctionResult(result.value)
 		else:
 			args_value = list(map(lambda x: x.value, args))
-			return FunctionResult(self.body(*args_value))
+			if isinstance(self.body, types.BuiltinFunctionType):
+				return FunctionResult(self.body(*args_value))
+			else:
+				return self.body(*args_value, symbol_table)
 	
 	def __str__(self) -> str:
-		return f"{self.name}({', '.join(map(lambda x: x.name, self.args))}) = {self.body}"
+		return f"{self.name}({', '.join(map(lambda x : str(x), self.args))}) = {self.body}"
 	
 	def __repr__(self) -> str:
 		return self.__str__()

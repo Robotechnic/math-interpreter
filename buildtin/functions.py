@@ -1,6 +1,7 @@
 from functionProps import FunctionArg, ArgRange
 from function import Function
 from math import sin, cos, tan, sqrt, tan, atan, atan2, acos, asin, radians, degrees
+from .plot import plot
 
 functions = {
 	"sin": Function(
@@ -27,22 +28,22 @@ functions = {
 	"sqrt": Function(
 		"sqrt",
 		[
-			FunctionArg("x", ArgRange("pos"))
+			FunctionArg("x", ArgRange("pos*"))
 		],
 		sqrt
 	),
 	"atan": Function(	
 		"atan",
 		[
-			FunctionArg("x", ArgRange(min_bound=-1, max_bound=1))
+			FunctionArg("x")
 		],
 		atan
 	),
 	"atan2": Function(
 		"atan2",
 		[
-			FunctionArg("x", ArgRange("notnul")),
-			FunctionArg("y", ArgRange("notnul"))
+			FunctionArg("x", ArgRange("notnull")),
+			FunctionArg("y", ArgRange("notnull"))
 		],
 		atan2
 	),
@@ -80,5 +81,15 @@ functions = {
 			FunctionArg("x")
 		],
 		abs
+	),
+	"plot": Function(
+		"plot",
+		[
+			FunctionArg("function"),
+			FunctionArg("min"),
+			FunctionArg("max"),
+			FunctionArg("step")
+		],
+		plot
 	)
 }
