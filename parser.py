@@ -142,16 +142,6 @@ class Parser:
 		max_bound = self.get_arg_range_bound()
 		if self.error:
 			return None
-		if self.check_index() and self.token != TokenType.RBRACKET:
-			self.error = True
-			displayError(
-				self.line,
-				ErrorType.MissingParentesisError,
-				self.token.end,
-				"Missing closing bracket"
-			)
-			
-			return None
 		
 		self.i += 1
 		
@@ -174,16 +164,27 @@ class Parser:
 			else:
 				bounds =  self.parse_args_range_bounds()
 			
-			if bounds:
-				return bounds
-			elif not self.error:
+			if self.check_index() and self.token != TokenType.RBRACKET:
 				self.error = True
 				displayError(
 					self.line,
-					ErrorType.ArithmeticExpressionError,
-					self.token,
-					"Missing range"
-				)		
+					ErrorType.MissingParentesisError,
+					self.token.end,
+					"Missing closing bracket"
+				)
+			else:
+				self.i += 1
+
+				if bounds:
+					return bounds
+				elif not self.error:
+					self.error = True
+					displayError(
+						self.line,
+						ErrorType.ArithmeticExpressionError,
+						self.token,
+						"Missing range"
+					)		
 
 		return None
 	

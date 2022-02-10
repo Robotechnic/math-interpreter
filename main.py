@@ -1,3 +1,4 @@
+import readline
 from interpreter import Interpreter
 
 i = Interpreter()

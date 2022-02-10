@@ -7,6 +7,18 @@ class StringRanges(str, Enum):
 	neg_ = "neg*"
 	notnul = "notnul"
 
+	def check_range(self, value : int | float) -> bool:
+		if self.value == "pos":
+			return value >= 0
+		elif self.value == "neg":
+			return value <= 0
+		elif self.value == "pos*":
+			return value > 0
+		elif self.value == "neg*":
+			return value < 0
+		elif self.value == "notnul":
+			return value != 0
+
 class ArgRange:
 	def __init__(self, range_type : StringRanges = None, min_bound : int = None, max_bound : int = None):
 		self.range_type = range_type
