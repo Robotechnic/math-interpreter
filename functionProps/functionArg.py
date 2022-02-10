@@ -1,25 +1,40 @@
 from .argRanges import ArgRange
 
 class FunctionArg:
-	def __init__(self, name : str, arg_range : ArgRange = None, start : int = 0, end : int = 0) -> None:
+	def __init__(self, name : str, arg_range : list = [], start : int = 0, end : int = 0) -> None:
 		self.name = name
 		self._range = None
-		self.arg_range = arg_range
+
+		if type(arg_range) != list:
+			self.arg_range = [arg_range]
+		else:
+			self.arg_range = arg_range
+		
+
 		self.start = start
 		self.end = end
 	
 	@property
-	def arg_range(self) -> range | ArgRange:
+	def arg_range(self) -> list:
 		return self._range
 	
 	@arg_range.setter
-	def arg_range(self, arg_range : range | ArgRange) -> None:
-		if arg_range != None:
-			if type(arg_range) == ArgRange:
-				self._range = arg_range
-			else:
-				raise TypeError(f"range must be a range or ArgRange, not {type(arg_range)}")
+	def arg_range(self, range_list : list) -> None:
+		for arg_range in range_list:
+			if arg_range != None:
+				if type(arg_range) != ArgRange:
+					raise TypeError(f"range must be a range or ArgRange, not {type(arg_range)}")
+		
+		self._range = range_list
 	
+	def check_arg_range(self, arg : int | float | bool) -> bool:
+		if len(self.arg_range) == 0:
+			return True
+		for arg_range in self.arg_range:
+			if arg_range.check_value(arg):
+				return True
+		return False
+
 	def __str__(self) -> str:
 		return f"{self.name}({self.arg_range})"
 	

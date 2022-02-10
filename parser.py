@@ -53,8 +53,7 @@ class Parser:
 	def manage_parenthesis(self) -> Node:
 		if self.token == TokenType.RPAREN:
 			self.error = True
-			self.i += 1
-			displayError(self.line, ErrorType.MissingParentesisError, self.i)
+			displayError(self.line, ErrorType.MissingParentesisError, self.token.start, "Missing openning parenthesis")
 			return None
 		elif self.token == TokenType.LPAREN:
 			self.i += 1
@@ -63,12 +62,12 @@ class Parser:
 				self.i += 1
 				return node
 			else:
-				displayError(self.line, ErrorType.MissingParentesisError, self.i)
 				self.error = True
+				displayError(self.line, ErrorType.MissingParentesisError, self.token.start, "Closing parenthesis expected")
 				return None
 		else:
 			self.error = True
-			displayError(self.line, ErrorType.MissingParentesisError, self.i, "Open parenthesis expected")
+			displayError(self.line, ErrorType.MissingParentesisError, self.token.start, "Open parenthesis expected")
 			return None
 	
 	def parse_keyword_range(self) -> ArgRange:
@@ -98,7 +97,9 @@ class Parser:
 			return None
 		
 		bound = self.factor()
-		if bound:
+		if self.error:
+			pass
+		elif bound:
 			if isinstance(bound, NumberNode):
 				return bound.value
 			elif isinstance(bound, NegNode) and isinstance(bound.value, NumberNode):
@@ -116,20 +117,23 @@ class Parser:
 			displayError(
 				self.line,
 				ErrorType.SyntaxError,
-				self.token.end,
+				self.token.start,
 				"Missing range bound"
 			)
+		
+		return None
 	
 	def get_range_min_bound(self) -> int | float:
 		min_bound = self.get_arg_range_bound()
 		if self.error:
 			return None
+
 		if self.check_index() and self.token != TokenType.SEMICOLON:
 			self.error = True
 			displayError(
 				self.line,
 				ErrorType.SyntaxError,
-				self.token.end,
+				self.token.start,
 				"Missing semicolon"
 			)
 			return None
@@ -149,13 +153,20 @@ class Parser:
 		min_bound = self.get_range_min_bound()
 		max_bound = self.get_range_max_bound()
 		
-		if min_bound is None and max_bound is None or self.error:
+		if (min_bound is None and max_bound is None) or self.error:
 			return None
 		
 		return ArgRange(min_bound = min_bound, max_bound = max_bound)
 
-	def parse_arg_range(self) -> Node:
-		if self.check_index() and self.token == TokenType.LBRACKET:
+	def parse_arg_range(self) -> list:
+		"""
+		Parse all ranges applied to a function argument
+
+		Returns:
+			list<ArgRange>: list of all ranges
+		"""
+		result = []
+		while self.check_index() and self.token == TokenType.LBRACKET:
 			self.i += 1
 			if self.token == TokenType.KEYWORD:
 				bounds = self.parse_keyword_range()
@@ -167,24 +178,24 @@ class Parser:
 				displayError(
 					self.line,
 					ErrorType.MissingParentesisError,
-					self.token.end,
+					self.token.start,
 					"Missing closing bracket"
 				)
 			else:
 				self.i += 1
 
 				if bounds:
-					return bounds
+					result.append(bounds)
 				elif not self.error:
 					self.error = True
 					displayError(
 						self.line,
 						ErrorType.ArithmeticExpressionError,
-						self.token,
+						self.token.start,
 						"Missing range"
 					)		
 
-		return None
+		return result
 	
 	def parse_function_declaration_arg(self) -> FunctionArg:
 		"""
@@ -270,7 +281,7 @@ class Parser:
 			displayError(
 				self.line,
 				ErrorType.UnexpectedTokenError,
-				0
+				range(self.token.start, self.token.end)
 			)
 		else:
 			function_name = self.token.value

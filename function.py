@@ -47,7 +47,7 @@ class Function:
 		for i in range(len(args)):
 			arg = args[i]
 			if self.args[i].arg_range:
-				in_range = self.args[i].arg_range.check_value(arg.value)
+				in_range = self.args[i].check_arg_range(arg.value)
 
 				if not in_range:
 					return False, NodeResult(
@@ -61,7 +61,7 @@ class Function:
 	
 	def check_arg_range(self, arg_index : int, arg_value : int | float | bool) -> bool:
 		if self.args[arg_index].arg_range:
-			return self.args[arg_index].arg_range.check_value(arg_value)
+			return self.args[arg_index].check_arg_range(arg_value)
 		else:
 			return True
 
