@@ -32,9 +32,11 @@ def plot2d(function : Function, x_min : int, x_max : int, y_min : int, y_max : i
 					values[-1].append(function_result)
 			else:
 				values[-1].append(float("nan"))
+			
 	
 	plt.imshow(values, extent=[x_min, x_max, y_min, y_max], interpolation=None)
 	plt.colorbar()
+	plt.title(function.expression)
 
 	try:
 		plt.show()

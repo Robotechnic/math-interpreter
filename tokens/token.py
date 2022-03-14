@@ -167,6 +167,8 @@ class Token:
 	def __repr__(self):
 		return self.__str__()
 
+	def __hash__(self):
+		return hash(self.__str__())
 
 # test error handling
 if __name__ == "__main__":

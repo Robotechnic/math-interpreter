@@ -46,7 +46,7 @@ class Lexer:
 			self.decimal_count += 1
 			if self.decimal_count > 1:
 				displayError(
-					self.line, 
+					self.line,
 					ErrorType.ArithmeticExpressionError,
 					self.i,
 					"Too many decimal points"

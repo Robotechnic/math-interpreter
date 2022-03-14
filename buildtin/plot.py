@@ -22,8 +22,9 @@ def plot(function : Function, min : int, max : int, step : int, symbol_table : d
 			y_values.append(function(symbol_table, [NumberNode(x, None, None)]).value)
 		else:
 			y_values.append(float("nan"))
-	
+			
 	plt.plot(x_values, y_values)
+	plt.title(function.expression)
 	
 	try:
 		plt.show()

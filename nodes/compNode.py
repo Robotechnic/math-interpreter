@@ -20,10 +20,19 @@ class ComparisonTypeError(Exception):
 	pass
 
 class CompNode(BinaryNode):
-	def __init__(self, left : Node, right : Node, type : ComparisionType, start : int, end : int) -> None:
-		super().__init__(left, right, start, end)
+	def __init__(self, type : ComparisionType) -> None:
+		super().__init__(Node(0,0), Node(0,0), 0, 0)
 		self._type = None
 		self.type = type
+	
+	def __call__(self, left : Node, right : Node, start : int, end : int):
+		node = CompNode(self.type)
+		node.left = left
+		node.right = right
+		node.start = start
+		node.end = end
+		return node
+	
 	
 	@property
 	def type(self) -> ComparisionType:
@@ -70,6 +79,8 @@ class CompNode(BinaryNode):
 				ErrorType.ComparisionTypeError,
 				f"{self.type} is not a valid comparision type"
 			)
+	
+
 	
 	def __str__(self) -> str:
 		return f"{self.left} {self.type.name} {self.right}"
