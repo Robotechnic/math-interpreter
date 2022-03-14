@@ -230,6 +230,18 @@ if __name__ == "__main__":
 		Token(TokenType.RPAREN, ")", 12)
 	]
 
+	l = Lexer("2 ^(5/9)")
+	print(l.tokenize())
+	assert l.tokenize() == [
+		Token(TokenType.NUMBER, 2, 0),
+		Token(TokenType.POW, "^", 2),
+		Token(TokenType.LPAREN, "(", 3),
+		Token(TokenType.NUMBER, 5, 4),
+		Token(TokenType.DIV, "/", 5),
+		Token(TokenType.NUMBER, 9, 6),
+		Token(TokenType.RPAREN, ")", 7)
+	]
+
 	l = Lexer("==")
 	print(l.tokenize())
 	assert l.tokenize() == [

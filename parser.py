@@ -383,6 +383,18 @@ class Parser:
 			return None
 
 		return self.call(node)
+	
+	def unary_operator(self) -> Node:
+		if self.tokens.current() == TokenType.MINUS:
+			self.tokens.pop()
+			atom = self.atom()
+			if self.error:
+				return None
+			return NegNode(atom, atom.start, atom.end)
+		if self.tokens.current() == TokenType.PLUS:
+			self.tokens.pop()
+		
+		return self.atom()
 			
 
 	def parse_operators(self, level : int, acc : Node = None) -> Node:
@@ -400,7 +412,7 @@ class Parser:
 			return acc
 
 		if level >= len(OPERATOR_CHAIN):
-			return self.atom()
+			return self.unary_operator()
 
 		if acc is None:
 			acc = self.parse_operators(level + 1)

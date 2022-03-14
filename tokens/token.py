@@ -1,5 +1,4 @@
 from enum import Enum, unique
-from lib2to3.pgen2.token import EQUAL
 import string
 from .tokenErrors import *
 
