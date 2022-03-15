@@ -30,7 +30,7 @@ functions = {
 	"sqrt": Function(
 		"sqrt",
 		[
-			FunctionArg("x", ArgRange("pos*"))
+			FunctionArg("x", ArgRange(0, False))
 		],
 		sqrt
 	),
@@ -44,8 +44,8 @@ functions = {
 	"atan2": Function(
 		"atan2",
 		[
-			FunctionArg("x", ArgRange("notnull")),
-			FunctionArg("y", ArgRange("notnull"))
+			FunctionArg("x", [ArgRange(None, False, 0, False), ArgRange(0, False)]),
+			FunctionArg("y", [ArgRange(None, False, 0, False), ArgRange(0, False)])
 		],
 		atan2
 	),

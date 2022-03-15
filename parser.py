@@ -1,12 +1,9 @@
-from operator import le
 from typing import Callable
-
-from numpy import cumprod
 from nodes import *
 from error import displayError
 from tokens import Token, TokenType
 from errorTypes import ErrorType
-from functionProps import FunctionArg, ArgRange, StringRanges
+from functionProps import FunctionArg, ArgRange
 from buffer import Buffer
 
 

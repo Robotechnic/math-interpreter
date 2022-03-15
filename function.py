@@ -2,7 +2,7 @@ import types
 from error.displayError import displayError
 from nodes import Node, NodeResult
 from errorTypes import ErrorType
-from functionProps import FunctionResult, ArgRange
+from functionProps import FunctionResult
 import interpreter as inter
 
 class Function:

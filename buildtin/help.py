@@ -13,6 +13,11 @@ def help(function : Function, symbol_table):
 	print(usage)
 	for arg in function.args:
 		if arg.arg_range:
-			print(f"\t{arg.name} : {arg.arg_range}")
+			range = f"\t{arg.name}"
+			for i, r in enumerate(arg.arg_range):
+				range += f"{r}"
+				if i != len(arg.arg_range) - 1:
+					range += "∪"
+			print(range)
 	
 	return FunctionResult(None)
