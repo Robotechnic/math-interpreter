@@ -6,7 +6,7 @@ from functionProps import FunctionResult
 import interpreter as inter
 
 class Function:
-	def __init__(self, name : str, args : list, body : Node | types.FunctionType | types.BuiltinFunctionType, expression = "") -> None:
+	def __init__(self, name : str, args : list, body : Node | types.FunctionType | types.BuiltinFunctionType, expression = "", description="") -> None:
 		"""
 		Function object to handle various functions in the language
 
@@ -20,6 +20,7 @@ class Function:
 		self.args = args
 		self.body = body
 		self.expression = expression
+		self.description = description
 	
 	def check_args(self, args : list) -> bool:
 		"""

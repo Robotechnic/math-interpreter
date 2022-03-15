@@ -68,14 +68,16 @@ functions = {
 		[
 			FunctionArg("x")
 		],
-		radians
+		radians,
+		description = "Convert angles from degrees to radians"
 	),
 	"deg": Function(
 		"deg",
 		[
 			FunctionArg("x")
 		],
-		degrees
+		degrees,
+		description = "Convert angles from radians to degrees"
 	),
 	"abs": Function(
 		"abs",
@@ -92,7 +94,8 @@ functions = {
 			FunctionArg("max"),
 			FunctionArg("step")
 		],
-		plot
+		plot,
+		description = "Plot a function in a graph between min and max and with a precision of step"
 	),
 	"plot2d": Function(
 		"plot2d",
@@ -102,16 +105,17 @@ functions = {
 			FunctionArg("y_min"),
 			FunctionArg("x_max"),
 			FunctionArg("y_max"),
-			FunctionArg("step_x"),
-			FunctionArg("step_y"),
+			FunctionArg("step")
 		],
-		plot2d
+		plot2d,
+		description = "Plot a two arguments function into a 2d graph with x between x_min and x_max and y between y_min and y_max, precision is given by step"
 	),
 	"help": Function(
 		"help",
 		[
 			FunctionArg("function")
 		],
-		help
+		help,
+		description = "Display this help message"
 	)
 }

@@ -13,14 +13,14 @@ def float_range(min, max, step = 1):
 		yield min
 		min += step
 
-def plot2d(function : Function, x_min : int, x_max : int, y_min : int, y_max : int, step_x : int, step_y : int, symbol_table : dict) -> FunctionResult:
+def plot2d(function : Function, x_min : int, x_max : int, y_min : int, y_max : int, step : int, symbol_table : dict) -> FunctionResult:
 	if len(function.args) != 2:
 		return FunctionResult(None, ErrorType.FunctionArgumentError, f"Function {function.name} must have 2 argument to be plotted")
 	
 	values = []
-	for x in float_range(x_min, x_max, step_x):
+	for x in float_range(x_min, x_max, step):
 		values.append([])
-		for y in float_range(y_max, y_min, step_y):
+		for y in float_range(y_max, y_min, step):
 			if function.check_arg_range(0, x) and function.check_arg_range(1, y):
 				function_result = function(symbol_table, [NumberNode(x,None,None), NumberNode(y,None,None)]).value
 				if type(function_result) == bool:

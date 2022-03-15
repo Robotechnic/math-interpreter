@@ -70,7 +70,7 @@ class Parser:
 		"""
 		Return range bound of a range
 		"""
-		if self.tokens.current() in [TokenType.SEMICOLON, TokenType.RBRACKET]:
+		if self.tokens.current() in [TokenType.SEMICOLON, TokenType.RBRACKET, TokenType.LBRACKET]:
 			self.tokens.pop()
 			return None
 		
@@ -99,34 +99,10 @@ class Parser:
 			"Range bounds must be numbers"
 		)
 		return None
-		
-	
-	def get_range_min_bound(self) -> int | float:
-		min_bound = self.get_arg_range_bound()
-		if self.error:
-			return None
-
-		if self.tokens.pop() != TokenType.SEMICOLON:
-			self.error = True
-			displayError(
-				self.line,
-				ErrorType.SyntaxError,
-				self.tokens.current().start,
-				"Missing semicolon"
-			)
-			return None
-
-		return min_bound
-	
-	def get_range_max_bound(self) -> int | float:
-		max_bound = self.get_arg_range_bound()
-		if self.error:
-			return None
-		return max_bound
 	
 	def parse_args_range_bounds(self) -> ArgRange:
-		min_bound = self.get_range_min_bound()
-		max_bound = self.get_range_max_bound()
+		min_bound = self.get_arg_range_bound()
+		max_bound = self.get_arg_range_bound()
 		
 		if self.error or (min_bound is None and max_bound is None):
 			return None
@@ -140,9 +116,10 @@ class Parser:
 		Returns:
 			list<ArgRange>: list of all ranges
 		"""
+		
 		result = []
-		while self.tokens.current() == TokenType.LBRACKET:
-			self.tokens.pop()
+		while self.tokens.current() in [TokenType.LBRACKET, TokenType.RBRACKET]:
+			min_included = self.tokens.pop() == TokenType.LBRACKET
 			bounds =  self.parse_args_range_bounds()
 			if self.error:
 				return None
@@ -156,17 +133,19 @@ class Parser:
 				)
 				return None	
 
-			if self.tokens.current() != TokenType.RBRACKET:
+			if self.tokens.current() not in  [TokenType.RBRACKET, TokenType.LBRACKET]:
 				self.error = True
 				displayError(
 					self.line,
 					ErrorType.MissingParentesisError,
 					self.tokens.current().start,
-					"Missing closing bracket"
+					"Missing closing or opening bracket"
 				)
 				return None
 			
-			self.tokens.pop()
+			max_included = self.tokens.pop() == TokenType.RBRACKET
+			bounds.min_included = min_included
+			bounds.max_included = max_included
 			result.append(bounds)
 
 		return result
