@@ -36,7 +36,7 @@ Syntax to create a new function is:
 Where:
 - `name` is the name of the function
 - `arg` is an argument name
-- `[min;max]` is the allowed range of the argument, if you doesn't give any number, value will be infinite: `[1;]` mean "every number greater or equal than 1"
+- `[min;max]` is the allowed range of the argument, if you doesn't give any number, value will be infinite: `[1;]` mean "every number greater or equal than 1". You can also use open range to open range: `]1;]` mean every number greater than 1.
 - `expression` is the function body
 
 **Exemples**:
