@@ -96,14 +96,14 @@ class Function:
 					result.message
 				)
 				return FunctionResult(None, result.error)
-			else:
-				return FunctionResult(result.value)
+			
+			return FunctionResult(result.value)
+		
+		args_value = list(map(lambda x: x.value, args))
+		if isinstance(self.body, types.BuiltinFunctionType):
+			return FunctionResult(self.body(*args_value))
 		else:
-			args_value = list(map(lambda x: x.value, args))
-			if isinstance(self.body, types.BuiltinFunctionType):
-				return FunctionResult(self.body(*args_value))
-			else:
-				return self.body(*args_value, symbol_table)
+			return self.body(*args_value, symbol_table)
 	
 	def __str__(self) -> str:
 		return f"{self.name}({', '.join(map(lambda x : str(x), self.args))}) = {self.body}"

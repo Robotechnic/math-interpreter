@@ -91,6 +91,13 @@ class Interpreter:
 		Returns:
 			NodeResult: result of the process
 		"""
+		if node.function not in self.symbol_table:
+			return NodeResult(
+				None,
+				range(node.start, node.end),
+				ErrorType.FunctionError,
+				f"Function {node.function} is undefined"
+			)
 		args = []
 		for arg in node.args:
 			arg_result = self.visit_node(arg)

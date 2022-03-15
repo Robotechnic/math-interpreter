@@ -1,6 +1,7 @@
 from errorTypes import ErrorType
 from nodes.nodeResult import NodeResult
 from .node import Node
+import function
 
 class FunctionNode(Node):
 	def __init__(self, function : str, args : list, start : int, end : int) -> None:
@@ -27,12 +28,14 @@ class FunctionNode(Node):
 			symbol_table (dict): symbol table to use
 
 		Returns:
-			Function: function if exists else None
+			int: 0 if function is defined, 1 if function name is in symbol table but not a function, 2 otherwise
 		"""
 		if self.function in symbol_table:
-			return symbol_table[self.function]
+			if isinstance(symbol_table[self.function], function.Function):
+				return 0
+			return 1
 
-		return None
+		return 2
 	
 	def execute(self, args : list, symbol_table = dict()) -> NodeResult:
 		"""
@@ -45,16 +48,23 @@ class FunctionNode(Node):
 		Returns:
 			NodeResult: result of the function call
 		"""
-		function = self.check_existence(symbol_table)
-		if not function:
+		existence = self.check_existence(symbol_table)
+
+		if existence:
+			error = f"\"{self.function}\" is not a function"
+			if function == 2:
+				error = f"Function \"{self.function}\" not defined"
+				
 			return NodeResult(
 				None,
 				range(self.start, self.end),
 				ErrorType.FunctionNameError,
-				f"Function '{self.function}' not defined"
+				error
 			)
 		
-		if not function.check_args(args):
+		runnedFunction = symbol_table[self.function]
+		
+		if not runnedFunction.check_args(args):
 			return NodeResult(
 				None,
 				range(self.start, self.end),
@@ -63,7 +73,7 @@ class FunctionNode(Node):
 			)
 		
 
-		result = function(symbol_table, args)
+		result = runnedFunction(symbol_table, args)
 		if result.error:
 			if result.error == ErrorType.DomainError:
 				return result

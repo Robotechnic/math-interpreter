@@ -1,6 +1,6 @@
 from functionProps import FunctionArg, ArgRange
 from function import Function
-from math import sin, cos, tan, sqrt, tan, atan, atan2, acos, asin, radians, degrees, factorial, log, log10
+from math import sin, cos, tan, sqrt, tan, atan, atan2, acos, asin, radians, degrees, factorial, log, log10, exp
 from .plot import plot
 from .plot2d import plot2d
 from .help import help
@@ -92,7 +92,7 @@ functions = {
 			FunctionArg("function"),
 			FunctionArg("min"),
 			FunctionArg("max"),
-			FunctionArg("step")
+			FunctionArg("step", ArgRange(1, False))
 		],
 		plot,
 		description = "Plot a function in a graph between min and max and with a precision of step"
@@ -105,7 +105,7 @@ functions = {
 			FunctionArg("y_min"),
 			FunctionArg("x_max"),
 			FunctionArg("y_max"),
-			FunctionArg("step")
+			FunctionArg("step", ArgRange(0, False))
 		],
 		plot2d,
 		description = "Plot a two arguments function into a 2d graph with x between x_min and x_max and y between y_min and y_max, precision is given by step"
@@ -140,5 +140,12 @@ functions = {
 			FunctionArg("base", ArgRange(0,False))
 		],
 		log
+	),
+	"exp": Function(
+		"exp",
+		[
+			FunctionArg("x")
+		],
+		exp
 	)
 }
