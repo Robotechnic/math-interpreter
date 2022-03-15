@@ -64,6 +64,10 @@ There are are all basic math functions:
 - asin
 - atan
 - atan2
+- factorial
+- ln
+- log
+- exp
 
 And some spetial functions:
 
@@ -75,6 +79,9 @@ And some spetial functions:
 |plot| plot a function into borned graph|
 |plot2d| plot a 2 paramaters function into a 2d graph|
 |help| display function arguments and range |
+|sum| calculate the sum of function values in a range|
+|integral| calculate the integral of a function|
+
 
 ### Exemples
 ![graph of tan(x^2+y^2) <= 5](https://github.com/Robotechnic/math-interpreter/raw/master/images/tan(x%5E2%2By%5E2)%3C%3D5.png)
