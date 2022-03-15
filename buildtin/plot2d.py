@@ -5,7 +5,6 @@ from functionProps.functionResult import FunctionResult
 from errorTypes import ErrorType
 from nodes import NumberNode
 
-
 def float_range(min, max, step = 1):
 	if max < min:
 		min, max = max, min

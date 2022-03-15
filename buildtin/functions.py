@@ -4,6 +4,7 @@ from math import sin, cos, tan, sqrt, tan, atan, atan2, acos, asin, radians, deg
 from .plot import plot
 from .plot2d import plot2d
 from .help import help
+from .sum import sum
 
 functions = {
 	"sin": Function(
@@ -147,5 +148,16 @@ functions = {
 			FunctionArg("x")
 		],
 		exp
+	),
+	"sum": Function(
+		"sum",
+		[
+			FunctionArg("function"),
+			FunctionArg("min"),
+			FunctionArg("max"),
+			FunctionArg("step", ArgRange(0, False))
+		],
+		sum,
+		description = "Sum the value of a function between min and max with a precision of step"
 	)
 }

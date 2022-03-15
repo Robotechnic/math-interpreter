@@ -30,6 +30,15 @@ class ArgRange:
 	
 	def __repr__(self) -> str:
 		return self.__str__()
+	
+	@staticmethod
+	def format_range(range_list : list) -> str:
+		result = ""
+		for i, range in enumerate(range_list):
+			result += str(range)
+			if i < len(range_list) - 1:
+				result += "∪"
+		return result
 
 if __name__ == "__main__":
 	assert ArgRange(min_bound = 0, max_bound = 10).check_value(5)

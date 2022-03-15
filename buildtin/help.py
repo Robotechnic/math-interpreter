@@ -1,5 +1,5 @@
 from function import Function
-from functionProps.functionResult import FunctionResult
+from functionProps import FunctionResult, ArgRange
 
 def help(function : Function, symbol_table):
 	print(f"Help ({function.name}):")
@@ -15,11 +15,6 @@ def help(function : Function, symbol_table):
 	print(usage)
 	for arg in function.args:
 		if arg.arg_range:
-			range = f"\t{arg.name}"
-			for i, r in enumerate(arg.arg_range):
-				range += f"{r}"
-				if i != len(arg.arg_range) - 1:
-					range += "∪"
-			print(range)
+			print(f"\t{arg.name} : {ArgRange.format_range(arg.arg_range)}")
 	
 	return FunctionResult(None)

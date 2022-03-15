@@ -1,8 +1,9 @@
 import types
 from error.displayError import displayError
+from functionProps.argRanges import ArgRange
 from nodes import Node, NodeResult
 from errorTypes import ErrorType
-from functionProps import FunctionResult
+from functionProps import FunctionResult, FunctionArg
 import interpreter as inter
 
 class Function:
@@ -55,7 +56,7 @@ class Function:
 						None,
 						arg.pos,
 						ErrorType.DomainError,
-						f"Argument {i} of function {self.name} with value {arg.value} is out of {self.args[i].arg_range}"
+						f"Argument {i} of function {self.name} with value {arg.value} is out of {ArgRange.format_range(self.args[i].arg_range)}"
 					)
 		
 		return True, None

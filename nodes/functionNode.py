@@ -69,7 +69,7 @@ class FunctionNode(Node):
 				None,
 				range(self.start, self.end),
 				ErrorType.FunctionArgumentError,
-				f"Function '{self.function}' expects {len(function.args)} arguments ({len(self.args)} given)"
+				f"Function '{self.function}' expects {len(runnedFunction.args)} arguments ({len(self.args)} given)"
 			)
 		
 

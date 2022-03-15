@@ -16,7 +16,7 @@ def plot(function : Function, min : int, max : int, step : int, symbol_table : d
 	
 	x_values = []
 	y_values = []
-	for x in float_range(min, max +1, step):
+	for x in float_range(min, max + 1, step):
 		x_values.append(x)
 		if function.check_arg_range(0, x):
 			y_values.append(function(symbol_table, [NumberNode(x, None, None)]).value)
