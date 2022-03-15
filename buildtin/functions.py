@@ -5,6 +5,7 @@ from .plot import plot
 from .plot2d import plot2d
 from .help import help
 from .sum import sum
+from .integral import integral
 
 functions = {
 	"sin": Function(
@@ -122,7 +123,7 @@ functions = {
 	"factorial": Function(
 		"factorial",
 		[
-			FunctionArg("x")
+			FunctionArg("x", ArgRange(0, True))
 		],
 		factorial,
 		description = "Calculate factorial value of a number"
@@ -159,5 +160,16 @@ functions = {
 		],
 		sum,
 		description = "Sum the value of a function between min and max with a precision of step"
+	),
+	"integral": Function(
+		"integral",
+		[
+			FunctionArg("function"),
+			FunctionArg("min"),
+			FunctionArg("max"),
+			FunctionArg("step", ArgRange(0, False, 1, False))
+		],
+		integral,
+		description = "Calculate the integral of a function between min and max with a precision of step"
 	)
 }

@@ -4,18 +4,18 @@ from function import Function
 from functionProps.functionResult import FunctionResult
 from errorTypes import ErrorType
 from nodes import NumberNode
-
-def float_range(min, max, step = 1):
-	if max < min:
-		min, max = max, min
-	while min < max:
-		yield min
-		min += step
+from .floatRange import float_range
 
 def plot2d(function : Function, x_min : int, x_max : int, y_min : int, y_max : int, step : int, symbol_table : dict) -> FunctionResult:
 	if len(function.args) != 2:
 		return FunctionResult(None, ErrorType.FunctionArgumentError, f"Function {function.name} must have 2 argument to be plotted")
+
+	if x_min > x_max:
+		return FunctionResult(None, ErrorType.FunctionArgumentError, f"x_min ({x_min}) must be less than x_max ({x_max})")
 	
+	if y_min > y_max:
+		return FunctionResult(None, ErrorType.FunctionArgumentError, f"y_min ({y_min}) must be less than y_max ({y_max})")
+
 	values = []
 	for x in float_range(x_min, x_max, step):
 		values.append([])

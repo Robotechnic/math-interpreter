@@ -4,15 +4,14 @@ from errorTypes import ErrorType
 from function import Function
 from functionProps.functionResult import FunctionResult
 from nodes import NumberNode
-
-def float_range(min, max, step = 1):
-	while min < max:
-		yield min
-		min += step
+from .floatRange import float_range
 
 def plot(function : Function, min : int, max : int, step : int, symbol_table : dict) -> FunctionResult:
 	if len(function.args) != 1:
 		return FunctionResult(None, ErrorType.FunctionArgumentError, f"Function {function.name} must have 1 argument to be plotted")
+	
+	if min > max:
+		return FunctionResult(None, ErrorType.FunctionArgumentError, f"min ({min}) must be less than max ({max})")
 	
 	x_values = []
 	y_values = []
