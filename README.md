@@ -36,16 +36,16 @@ Syntax to create a new function is:
 Where:
 - `name` is the name of the function
 - `arg` is an argument name
-- `[min;max]` is the allowed range of the argument, you can use +inf and -inf and add as many ranges as you whant
+- `[min;max]` is the allowed range of the argument, if you doesn't give any number, value will be infinite: `[1;]` mean "every number greater or equal than 1"
 - `expression` is the function body
 
 **Exemples**:
 
 `f(x) = 2*x`
 
-`f(x[0;+inf]) = sqrt(2 * x) + 8`
+`f(x[0;]) = sqrt(2 * x) + 8`
 
-`f(x[-inf;1][1;+inf]) = 1/x`
+`f(x[;1][1;]) = 1/x`
 
 ### Constants
 |name|description|
