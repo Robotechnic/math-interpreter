@@ -3,6 +3,7 @@ from function import Function
 from math import sin, cos, tan, sqrt, tan, atan, atan2, acos, asin, radians, degrees
 from .plot import plot
 from .plot2d import plot2d
+from .help import help
 
 functions = {
 	"sin": Function(
@@ -105,5 +106,12 @@ functions = {
 			FunctionArg("step_y"),
 		],
 		plot2d
+	),
+	"help": Function(
+		"help",
+		[
+			FunctionArg("function")
+		],
+		help
 	)
 }
