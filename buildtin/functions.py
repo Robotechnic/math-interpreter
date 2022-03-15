@@ -1,6 +1,6 @@
 from functionProps import FunctionArg, ArgRange
 from function import Function
-from math import sin, cos, tan, sqrt, tan, atan, atan2, acos, asin, radians, degrees
+from math import sin, cos, tan, sqrt, tan, atan, atan2, acos, asin, radians, degrees, factorial, log, log10
 from .plot import plot
 from .plot2d import plot2d
 from .help import help
@@ -117,5 +117,28 @@ functions = {
 		],
 		help,
 		description = "Display this help message"
+	),
+	"factorial": Function(
+		"factorial",
+		[
+			FunctionArg("x")
+		],
+		factorial,
+		description = "Calculate factorial value of a number"
+	),
+	"ln": Function (
+		"ln",
+		[
+			FunctionArg("x",ArgRange(0, False))
+		],
+		log10,		
+	),
+	"log": Function(
+		"log",
+		[
+			FunctionArg("x", ArgRange(0,False)),
+			FunctionArg("base", ArgRange(0,False))
+		],
+		log
 	)
 }

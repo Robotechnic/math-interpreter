@@ -12,4 +12,4 @@ while True:
 	readline.write_history_file()
 	if l == "exit":
 		break
-	print(i.evaluate(l))
+	print(i.evaluate(l) or "")
