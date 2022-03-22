@@ -15,7 +15,7 @@ def plot2d(function : Function, x_min : int, x_max : int, y_min : int, y_max : i
 	
 	if y_min > y_max:
 		return FunctionResult(None, ErrorType.FunctionArgumentError, f"y_min ({y_min}) must be less than y_max ({y_max})")
-
+	
 	values = []
 	for x in float_range(x_min, x_max, step):
 		values.append([])

@@ -94,7 +94,7 @@ functions = {
 			FunctionArg("function"),
 			FunctionArg("min"),
 			FunctionArg("max"),
-			FunctionArg("step", ArgRange(1, False))
+			FunctionArg("step", ArgRange(0, False))
 		],
 		plot,
 		description = "Plot a function in a graph between min and max and with a precision of step"

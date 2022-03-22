@@ -78,6 +78,6 @@ class FunctionNode(Node):
 			if result.error == ErrorType.DomainError:
 				return result
 			else:
-				return NodeResult(None, range(self.start, self.end), ErrorType.FunctionError)
+				return NodeResult(None, range(self.start, self.end), ErrorType.FunctionError, result.message)
 		else:
 			return NodeResult(result.value, range(self.start, self.end))
