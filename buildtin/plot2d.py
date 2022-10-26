@@ -21,14 +21,16 @@ def plot2d(function : Function, x_min : int, x_max : int, y_min : int, y_max : i
 		values.append([])
 		for y in float_range(y_max, y_min, step):
 			if function.check_arg_range(0, x) and function.check_arg_range(1, y):
-				function_result = function(symbol_table, [NumberNode(x,None,None), NumberNode(y,None,None)]).value
-				if type(function_result) == bool:
-					if function_result:
+				function_result = function(symbol_table, [NumberNode(x,None,None), NumberNode(y,None,None)])
+				if function_result.error:
+					return function_result
+				if type(function_result.value) == bool:
+					if function_result.value:
 						values[-1].append(1)
 					else:
 						values[-1].append(float("nan"))
 				else:
-					values[-1].append(function_result)
+					values[-1].append(function_result.value)
 			else:
 				values[-1].append(float("nan"))
 			

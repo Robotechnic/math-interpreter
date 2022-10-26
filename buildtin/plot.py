@@ -18,7 +18,10 @@ def plot(function : Function, min : int, max : int, step : int, symbol_table : d
 	for x in float_range(min, max + 1, step):
 		x_values.append(x)
 		if function.check_arg_range(0, x):
-			y_values.append(function(symbol_table, [NumberNode(x, None, None)]).value)
+			result = function(symbol_table, [NumberNode(x,None,None)])
+			if result.error:
+				return result
+			y_values.append(result.value)
 		else:
 			y_values.append(float("nan"))
 			
